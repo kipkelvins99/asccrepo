@@ -20,7 +20,7 @@ class AccountFollowupCustomer(models.AbstractModel):
                     'style': 'white-space:nowrap;'},
                    {'name': _('Excluded'), 'class': 'date',
                     'style': 'white-space:nowrap;'},
-                   {'name': _('Total Invoiced'), 'class': 'number',
+                   {'name': _('Amount'), 'class': 'number',
                     'style': 'text-align:right; white-space:nowrap;'},
                    {'name': _('Total Due'), 'class': 'number o_price_total',
                     'style': 'text-align:right; white-space:nowrap;'},
@@ -70,7 +70,7 @@ class AccountFollowupCustomer(models.AbstractModel):
                 if is_payment:
                     date_due = ''
                 move_line_name = self._format_aml_name(aml.name, aml.move_id.ref, aml.move_id.name)
-                total_amoun=aml.move_id.amount_total
+                total_amoun = aml.move_id.amount_total_signed
                 if self.env.context.get('print_mode'):
                     move_line_name = {'name': move_line_name, 'style': 'text-align:right; white-space:normal;'}
                 amount = formatLang(self.env, amount, currency_obj=currency)
