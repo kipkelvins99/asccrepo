@@ -24,7 +24,8 @@ class AccountFollowupCustomer(models.AbstractModel):
                     'style': 'text-align:right; white-space:nowrap;'},
                    {'name': _('Total Due'), 'class': 'number o_price_total',
                     'style': 'text-align:right; white-space:nowrap;'},
-
+                   {'name': _('Balance'), 'class': 'number o_price_total',
+                    'style': 'text-align:right; white-space:nowrap;'},
                    ]
         if self.env.context.get('print_mode'):
             headers = headers[:5] + headers[
@@ -43,9 +44,11 @@ class AccountFollowupCustomer(models.AbstractModel):
 
         lang_code = partner.lang if self._context.get('print_mode') else self.env.user.lang or get_lang(self.env).code
         lines = []
+        li=[]
         res = {}
         today = fields.Date.today()
         line_num = 0
+        running_bal = 0
         for l in partner.unreconciled_aml_ids.sorted():
             if l.company_id == self.env.company:
                 if self.env.context.get('print_mode') and l.blocked:
@@ -59,6 +62,9 @@ class AccountFollowupCustomer(models.AbstractModel):
             total_issued = 0
             for aml in aml_recs:
                 amount = aml.amount_residual_currency if aml.currency_id else aml.amount_residual
+                li.append(amount)
+                running_bal = li[0] + running_bal
+                format_float = "{:.2f}".format(running_bal)
                 date_due = format_date(self.env, aml.date_maturity or aml.date, lang_code=lang_code)
                 total += not aml.blocked and amount or 0
                 is_overdue = today > aml.date_maturity if aml.date_maturity else today > aml.date
@@ -89,7 +95,9 @@ class AccountFollowupCustomer(models.AbstractModel):
                     {'name': '', 'blocked': aml.blocked},
                     total_amoun,
                     amount,
+                    format_float,
                 ]
+                # print(columns,'columns.........')
                 if self.env.context.get('print_mode'):
                     columns = columns[:4] + columns[6:]
                 lines.append({
@@ -102,6 +110,7 @@ class AccountFollowupCustomer(models.AbstractModel):
                     'unfoldable': False,
                     'columns': [type(v) == dict and v or {'name': v} for v in columns],
                 })
+                li.pop(0)
             total_due = formatLang(self.env, total, currency_obj=currency)
             line_num += 1
             lines.append({
@@ -110,20 +119,9 @@ class AccountFollowupCustomer(models.AbstractModel):
                 'class': 'total',
                 'style': 'border-top-style: double',
                 'unfoldable': False,
-                'level': 3,
-                'columns': [{'name': v} for v in [''] * (4 if self.env.context.get('print_mode') else 6) + [total >= 0 and _('Total Due') or '', total_due]],
+                'level': 4,
+                'columns': [{'name': v} for v in [''] * (5 if self.env.context.get('print_mode') else 7) + [total >= 0 and _('Total Due') or '', total_due]],
             })
-            if total_issued > 0:
-                total_issued = formatLang(self.env, total_issued, currency_obj=currency)
-                line_num += 1
-                lines.append({
-                    'id': line_num,
-                    'name': '',
-                    'class': 'total',
-                    'unfoldable': False,
-                    'level': 3,
-                    'columns': [{'name': v} for v in [''] * (4 if self.env.context.get('print_mode') else 6) + [_('Total Overdue'), total_issued]],
-                })
             # Add an empty line after the total to make a space between two currencies
             line_num += 1
             lines.append({
