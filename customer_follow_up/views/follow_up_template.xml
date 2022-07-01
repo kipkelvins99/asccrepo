@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="template_followup_report_main" inherit_id="account_followup.template_followup_report">
+            <div class="col-md-3 col-lg-2 col-xl-4" position="inside">
+                <br/>
+                <span>Credit Limit: <t t-esc="invoice_address_id.credit_limit" /></span><br/>
+                <span>Payment Term: <t t-esc="invoice_address_id.property_payment_term_id.name" /></span>
+            </div>
+            <xpath expr="//table[hasclass('o_account_reports_table')]" position="after">
+                <div class="o_account_reports_summary"/>
+                    <div class="table-responsive">
+                        <table class="o_account_reports_table table-hover">
+                            <t t-call="{{model._get_templates()['main_table_header_template']}}"/>
+                            <tbody>
+                                <t t-if="lines.get('lines')">
+                                    <t t-call="{{model._get_templates()['line_template']}}"/>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+            </xpath>
+        </template>
+    </data>
+</odoo>

@@ -97,7 +97,6 @@ class AccountFollowupCustomer(models.AbstractModel):
                     amount,
                     format_float,
                 ]
-                # print(columns,'columns.........')
                 if self.env.context.get('print_mode'):
                     columns = columns[:4] + columns[6:]
                 lines.append({
