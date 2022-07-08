@@ -27,6 +27,7 @@ class AccountFollowupCustomer(models.AbstractModel):
                    {'name': _('Balance'), 'class': 'number o_price_total',
                     'style': 'text-align:right; white-space:nowrap;'},
                    ]
+        print(headers, 'headers....')
         if self.env.context.get('print_mode'):
             headers = headers[:5] + headers[
                                     7:]  # Remove the 'Expected Date' and 'Excluded' columns
@@ -38,13 +39,16 @@ class AccountFollowupCustomer(models.AbstractModel):
         Compute and return the lines of the columns of the follow-ups report.
         """
         # Get date format for the lang
-        partner = options.get('partner_id') and self.env['res.partner'].browse(options['partner_id']) or False
+        new_fun = self.report_new(options)
+        partner = options.get('partner_id') and self.env['res.partner'].browse(
+            options['partner_id']) or False
         if not partner:
             return []
 
-        lang_code = partner.lang if self._context.get('print_mode') else self.env.user.lang or get_lang(self.env).code
+        lang_code = partner.lang if self._context.get(
+            'print_mode') else self.env.user.lang or get_lang(self.env).code
         lines = []
-        li=[]
+        li = []
         res = {}
         today = fields.Date.today()
         line_num = 0
@@ -65,24 +69,32 @@ class AccountFollowupCustomer(models.AbstractModel):
                 li.append(amount)
                 running_bal = li[0] + running_bal
                 format_float = "{:.2f}".format(running_bal)
-                date_due = format_date(self.env, aml.date_maturity or aml.date, lang_code=lang_code)
+                date_due = format_date(self.env, aml.date_maturity or aml.date,
+                                       lang_code=lang_code)
                 total += not aml.blocked and amount or 0
                 is_overdue = today > aml.date_maturity if aml.date_maturity else today > aml.date
                 is_payment = aml.payment_id
                 if is_overdue or is_payment:
                     total_issued += not aml.blocked and amount or 0
                 if is_overdue:
-                    date_due = {'name': date_due, 'class': 'color-red date', 'style': 'white-space:nowrap;text-align:center;color: red;'}
+                    date_due = {'name': date_due, 'class': 'color-red date',
+                                'style': 'white-space:nowrap;text-align:center;color: red;'}
                 if is_payment:
                     date_due = ''
-                move_line_name = self._format_aml_name(aml.name, aml.move_id.ref, aml.move_id.name)
+                move_line_name = self._format_aml_name(aml.name,
+                                                       aml.move_id.ref,
+                                                       aml.move_id.name)
                 total_amoun = aml.move_id.amount_total_signed
                 if self.env.context.get('print_mode'):
-                    move_line_name = {'name': move_line_name, 'style': 'text-align:right; white-space:normal;'}
+                    move_line_name = {'name': move_line_name,
+                                      'style': 'text-align:right; white-space:normal;'}
                 amount = formatLang(self.env, amount, currency_obj=currency)
-                total_amoun = formatLang(self.env, total_amoun, currency_obj=currency)
+                total_amoun = formatLang(self.env, total_amoun,
+                                         currency_obj=currency)
                 line_num += 1
-                expected_pay_date = format_date(self.env, aml.expected_pay_date, lang_code=lang_code) if aml.expected_pay_date else ''
+                expected_pay_date = format_date(self.env,
+                                                aml.expected_pay_date,
+                                                lang_code=lang_code) if aml.expected_pay_date else ''
                 invoice_origin = aml.move_id.invoice_origin or ''
                 if len(invoice_origin) > 43:
                     invoice_origin = invoice_origin[:40] + '...'
@@ -91,7 +103,8 @@ class AccountFollowupCustomer(models.AbstractModel):
                     date_due,
                     invoice_origin,
                     move_line_name,
-                    (expected_pay_date and expected_pay_date + ' ') + (aml.internal_note or ''),
+                    (expected_pay_date and expected_pay_date + ' ') + (
+                            aml.internal_note or ''),
                     {'name': '', 'blocked': aml.blocked},
                     total_amoun,
                     amount,
@@ -107,7 +120,8 @@ class AccountFollowupCustomer(models.AbstractModel):
                     'move_id': aml.move_id.id,
                     'type': is_payment and 'payment' or 'unreconciled_aml',
                     'unfoldable': False,
-                    'columns': [type(v) == dict and v or {'name': v} for v in columns],
+                    'columns': [type(v) == dict and v or {'name': v} for v in
+                                columns],
                 })
                 li.pop(0)
             total_due = formatLang(self.env, total, currency_obj=currency)
@@ -119,7 +133,10 @@ class AccountFollowupCustomer(models.AbstractModel):
                 'style': 'border-top-style: double',
                 'unfoldable': False,
                 'level': 4,
-                'columns': [{'name': v} for v in [''] * (5 if self.env.context.get('print_mode') else 7) + [total >= 0 and _('Total Due') or '', total_due]],
+                'columns': [{'name': v} for v in [''] * (
+                    5 if self.env.context.get('print_mode') else 7) + [
+                                total >= 0 and _('Total Due') or '',
+                                total_due]],
             })
             # Add an empty line after the total to make a space between two currencies
             line_num += 1
@@ -136,3 +153,88 @@ class AccountFollowupCustomer(models.AbstractModel):
         if lines:
             lines.pop()
         return lines
+
+    def report_new(self, options):
+        partner = options.get('partner_id') and self.env['res.partner'].browse(
+            options['partner_id']) or False
+        print(partner.id)
+        record = []
+        record.extend([{'symbol': self.env.company.currency_id.symbol}])
+        self.env.cr.execute('''select sum(amount_residual) as current
+                   from account_move
+                   where move_type = 'out_invoice' and DATE(invoice_date) = DATE(NOW()) and state = 'posted' and partner_id = '%s' 
+                   group by partner_id ''' % (partner.id))
+        current_rec = self.env.cr.dictfetchall()
+        if not current_rec:
+            record.extend([{'current': 0.0}])
+        else:
+            record.extend(current_rec)
+        self.env.cr.execute('''select sum(amount_residual) as due1
+                            from account_move
+                            WHERE
+                            (date(now()) - invoice_date_due ) < 30 
+                            AND partner_id = '%s' 
+                            group by partner_id ''' % (partner.id))
+        due1 = self.env.cr.dictfetchall()
+        if not due1:
+            record.extend([{'due1': 0.0}])
+        else:
+            record.extend(due1)
+        self.env.cr.execute('''select sum(amount_residual) as due2
+                            from account_move
+                            WHERE
+                            (date(now()) - invoice_date_due ) > 30
+                            and  (date(now()) - invoice_date_due ) > 60
+                            AND partner_id = '%s' 
+                            group by partner_id ''' % (partner.id))
+        due2 = self.env.cr.dictfetchall()
+        if not due2:
+            record.extend([{'due2': 0.0}])
+        else:
+            record.extend(due2)
+        self.env.cr.execute('''select sum(amount_residual) as due3
+                            from account_move
+                            WHERE
+                            (date(now()) - invoice_date_due ) > 60
+                            and  (date(now()) - invoice_date_due ) > 90
+                            AND partner_id = '%s' 
+                            group by partner_id ''' % (partner.id))
+        due3 = self.env.cr.dictfetchall()
+        if not due3:
+            record.extend([{'due3': 0.0}])
+        else:
+            record.extend(due3)
+        self.env.cr.execute('''select sum(amount_residual) as due4
+                                    from account_move
+                                    WHERE
+                                    (date(now()) - invoice_date_due ) > 90
+                                    and  (date(now()) - invoice_date_due ) > 120
+                                    AND partner_id = '%s' 
+                                    group by partner_id ''' % (partner.id))
+        due4 = self.env.cr.dictfetchall()
+        if not due4:
+            record.extend([{'due4': 0.0}])
+        else:
+            record.extend(due4)
+        self.env.cr.execute('''select sum(amount_residual) as due5
+                                    from account_move
+                                    WHERE
+                                    (date(now()) - invoice_date_due ) > 120
+                                    AND partner_id = '%s' 
+                                    group by partner_id ''' % (partner.id))
+        due5 = self.env.cr.dictfetchall()
+        if not due5:
+            record.extend([{'due5': 0.0}])
+        else:
+            record.extend(due5)
+        self.env.cr.execute('''select sum(amount_residual) as total
+                                            from account_move
+                                            WHERE partner_id = '%s' 
+                                            group by partner_id ''' % (partner.id))
+        total = self.env.cr.dictfetchall()
+        if not total:
+            record.extend([{'total': 0.0}])
+        else:
+            record.extend(total)
+
+        return record

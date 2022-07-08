@@ -8,17 +8,62 @@
                 <span>Payment Term: <t t-esc="invoice_address_id.property_payment_term_id.name" /></span>
             </div>
             <xpath expr="//table[hasclass('o_account_reports_table')]" position="after">
-                <div class="o_account_reports_summary"/>
-                    <div class="table-responsive">
-                        <table class="o_account_reports_table table-hover">
-                            <t t-call="{{model._get_templates()['main_table_header_template']}}"/>
-                            <tbody>
-                                <t t-if="lines.get('lines')">
-                                    <t t-call="{{model._get_templates()['line_template']}}"/>
-                                </t>
-                            </tbody>
-                        </table>
-                    </div>
+                <br/>
+                <templates id="template">
+                    <t t-name="AgeingTemp">
+                        <div>
+                            <div class="table-responsive">
+                                <table class="o_account_reports_table table-hover" width="100%">
+                                    <thead class="o_account_reports_header_hierarchy">
+                                        <tr>
+                                            <th class="o_account_report_column_header" style="text-align:center; white-space:nowrap;">Current</th>
+                                            <th class="o_account_report_column_header" style="text-align:center; white-space:nowrap;">1-30</th>
+                                            <th class="o_account_report_column_header" style="text-align:center; white-space:nowrap;">31-60</th>
+                                            <th class="o_account_report_column_header" style="text-align:center; white-space:nowrap;">61-90</th>
+                                            <th class="o_account_report_column_header" style="text-align:center; white-space:nowrap;">91-120</th>
+                                            <th class="o_account_report_column_header" style="text-align:center; white-space:nowrap;">Older</th>
+
+                                            <th class="o_account_report_column_header" style="text-align:center; white-space:nowrap;">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="o_account_reports_default_style" style="text-align:center; white-space:nowrap;">
+                                            <td class="o_account_report_line o_account_report_line_indent"  >
+                                                <span t-esc="model.report_new(options)[0]['symbol']"/>
+                                                <span t-esc="model.report_new(options)[1]['current']"/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="model.report_new(options)[0]['symbol']"/>
+                                                <span t-esc="model.report_new(options)[2]['due1']"/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="model.report_new(options)[0]['symbol']"/>
+                                                <span t-esc="model.report_new(options)[3]['due2']"/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="model.report_new(options)[0]['symbol']"/>
+                                                <span t-esc="model.report_new(options)[4]['due3']"/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="model.report_new(options)[0]['symbol']"/>
+                                                <span t-esc="model.report_new(options)[5]['due4']"/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="model.report_new(options)[0]['symbol']"/>
+                                                <span t-esc="model.report_new(options)[6]['due5']"/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="model.report_new(options)[0]['symbol']"/>
+                                                <span t-esc="model.report_new(options)[7]['total']"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </t>
+
+                </templates>
             </xpath>
         </template>
     </data>
