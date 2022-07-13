@@ -1,0 +1,8 @@
+.o_account_reports_table{
+    tr:not(:first-child) th {
+        border:  1px solid black !important;
+    }
+    tr:first-child th:not(:first-child) {
+        border: 1px solid black !important ;
+    }
+}

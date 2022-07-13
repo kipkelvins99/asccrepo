@@ -8,6 +8,7 @@
     'maintainer': 'Cybrosys Techno Solutions',
     'data': [
         'views/follow_up_template.xml',
+        'views/follow_up_assets.xml',
     ],
 
     'installable': True,

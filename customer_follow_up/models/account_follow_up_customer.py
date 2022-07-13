@@ -27,7 +27,6 @@ class AccountFollowupCustomer(models.AbstractModel):
                    {'name': _('Balance'), 'class': 'number o_price_total',
                     'style': 'text-align:right; white-space:nowrap;'},
                    ]
-        print(headers, 'headers....')
         if self.env.context.get('print_mode'):
             headers = headers[:5] + headers[
                                     7:]  # Remove the 'Expected Date' and 'Excluded' columns
@@ -154,10 +153,16 @@ class AccountFollowupCustomer(models.AbstractModel):
             lines.pop()
         return lines
 
+    def _get_report_name(self):
+        """
+        Override
+        Return the name of the report
+        """
+        return _('Customer Statement')
+
     def report_new(self, options):
         partner = options.get('partner_id') and self.env['res.partner'].browse(
             options['partner_id']) or False
-        print(partner.id)
         record = []
         record.extend([{'symbol': self.env.company.currency_id.symbol}])
         self.env.cr.execute('''select sum(amount_residual) as current
@@ -230,11 +235,11 @@ class AccountFollowupCustomer(models.AbstractModel):
         self.env.cr.execute('''select sum(amount_residual) as total
                                             from account_move
                                             WHERE partner_id = '%s' 
-                                            group by partner_id ''' % (partner.id))
+                                            group by partner_id ''' % (
+            partner.id))
         total = self.env.cr.dictfetchall()
         if not total:
             record.extend([{'total': 0.0}])
         else:
             record.extend(total)
-
         return record
