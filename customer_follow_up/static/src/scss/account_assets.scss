@@ -1,8 +1,20 @@
 .o_account_reports_table{
-    tr:not(:first-child) th {
+    tr th {
         border:  1px solid black !important;
     }
-    tr:first-child th:not(:first-child) {
+    tr th {
         border: 1px solid black !important ;
+    }
+}
+.o_account_reports_page {
+    color: black !important;
+    padding-bottom: 0!important;
+    padding-top: 0!important;
+    .o_account_reports_table {
+        overflow-x: initial;
+        border: 2px solid black !important;
+        tr {
+            border:  1px solid black !important;
+        }
     }
 }

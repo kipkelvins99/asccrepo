@@ -7,26 +7,27 @@ class AccountFollowupCustomer(models.AbstractModel):
     _inherit = 'account.followup.report'
 
     def _get_columns_name(self, options):
-        headers = [{},
-                   {'name': _('Date'), 'class': 'date',
-                    'style': 'text-align:center; white-space:nowrap;'},
-                   {'name': _('Due Date'), 'class': 'date',
-                    'style': 'text-align:center; white-space:nowrap;'},
-                   {'name': _('Source Document'),
-                    'style': 'text-align:center; white-space:nowrap;'},
-                   {'name': _('Communication'),
-                    'style': 'text-align:right; white-space:nowrap;'},
-                   {'name': _('Expected Date'), 'class': 'date',
-                    'style': 'white-space:nowrap;'},
-                   {'name': _('Excluded'), 'class': 'date',
-                    'style': 'white-space:nowrap;'},
-                   {'name': _('Amount'), 'class': 'number',
-                    'style': 'text-align:right; white-space:nowrap;'},
-                   {'name': _('Total Due'), 'class': 'number o_price_total',
-                    'style': 'text-align:right; white-space:nowrap;'},
-                   {'name': _('Balance'), 'class': 'number o_price_total',
-                    'style': 'text-align:right; white-space:nowrap;'},
-                   ]
+        headers = [
+            {'style': 'display:none;'},
+            {'name': _('Date'), 'class': 'date',
+             'style': 'text-align:center; width:15%; white-space:nowrap;'},
+            {'name': _('Due Date'), 'class': 'date',
+             'style': 'text-align:center; white-space:nowrap;'},
+            {'name': _('Source Document'),
+             'style': 'text-align:center; white-space:nowrap;'},
+            {'name': _('Communication'),
+             'style': 'text-align:right; white-space:nowrap;'},
+            {'name': _('Expected Date'), 'class': 'date',
+             'style': 'white-space:nowrap;'},
+            {'name': _('Excluded'), 'class': 'date',
+             'style': 'white-space:nowrap;'},
+            {'name': _('Amount'), 'class': 'number',
+             'style': 'text-align:right; white-space:nowrap;'},
+            {'name': _('Total Due'), 'class': 'number o_price_total',
+             'style': 'text-align:right; white-space:nowrap;'},
+            {'name': _('Balance'), 'class': 'number o_price_total',
+             'style': 'text-align:right; white-space:nowrap;'},
+            ]
         if self.env.context.get('print_mode'):
             headers = headers[:5] + headers[
                                     7:]  # Remove the 'Expected Date' and 'Excluded' columns
@@ -84,9 +85,13 @@ class AccountFollowupCustomer(models.AbstractModel):
                                                        aml.move_id.ref,
                                                        aml.move_id.name)
                 total_amoun = aml.move_id.amount_total_signed
+                format_new_date = format_date(self.env, aml.date,
+                                          lang_code=lang_code)
                 if self.env.context.get('print_mode'):
                     move_line_name = {'name': move_line_name,
                                       'style': 'text-align:right; white-space:normal;'}
+                    format_new_date = {'name': format_new_date,
+                                      'style': 'text-align:right;'}
                 amount = formatLang(self.env, amount, currency_obj=currency)
                 total_amoun = formatLang(self.env, total_amoun,
                                          currency_obj=currency)
@@ -98,7 +103,8 @@ class AccountFollowupCustomer(models.AbstractModel):
                 if len(invoice_origin) > 43:
                     invoice_origin = invoice_origin[:40] + '...'
                 columns = [
-                    format_date(self.env, aml.date, lang_code=lang_code),
+                    # format_date(self.env, aml.date, lang_code=lang_code),
+                    format_new_date,
                     date_due,
                     invoice_origin,
                     move_line_name,
@@ -114,8 +120,8 @@ class AccountFollowupCustomer(models.AbstractModel):
                 lines.append({
                     'id': aml.id,
                     'account_move': aml.move_id,
-                    'name': aml.move_id.name,
-                    'caret_options': 'followup',
+                    # 'name': aml.move_id.name,
+                    # 'caret_options': 'followup',
                     'move_id': aml.move_id.id,
                     'type': is_payment and 'payment' or 'unreconciled_aml',
                     'unfoldable': False,
@@ -133,7 +139,7 @@ class AccountFollowupCustomer(models.AbstractModel):
                 'unfoldable': False,
                 'level': 4,
                 'columns': [{'name': v} for v in [''] * (
-                    5 if self.env.context.get('print_mode') else 7) + [
+                    5 if self.env.context.get('print_mode') else 6) + [
                                 total >= 0 and _('Total Due') or '',
                                 total_due]],
             })
