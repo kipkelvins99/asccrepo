@@ -27,7 +27,7 @@ class AccountFollowupCustomer(models.AbstractModel):
              'style': 'text-align:right; white-space:nowrap;'},
             {'name': _('Balance'), 'class': 'number o_price_total',
              'style': 'text-align:right; white-space:nowrap;'},
-            ]
+        ]
         if self.env.context.get('print_mode'):
             headers = headers[:5] + headers[
                                     7:]  # Remove the 'Expected Date' and 'Excluded' columns
@@ -85,13 +85,14 @@ class AccountFollowupCustomer(models.AbstractModel):
                                                        aml.move_id.ref,
                                                        aml.move_id.name)
                 total_amoun = aml.move_id.amount_total_signed
+                print(aml.move_id.name,'amlllllll')
                 format_new_date = format_date(self.env, aml.date,
-                                          lang_code=lang_code)
+                                              lang_code=lang_code)
                 if self.env.context.get('print_mode'):
                     move_line_name = {'name': move_line_name,
                                       'style': 'text-align:right; white-space:normal;'}
                     format_new_date = {'name': format_new_date,
-                                      'style': 'text-align:right;'}
+                                       'style': 'text-align:right;'}
                 amount = formatLang(self.env, amount, currency_obj=currency)
                 total_amoun = formatLang(self.env, total_amoun,
                                          currency_obj=currency)
@@ -173,76 +174,74 @@ class AccountFollowupCustomer(models.AbstractModel):
         record.extend([{'symbol': self.env.company.currency_id.symbol}])
         self.env.cr.execute('''select sum(amount_residual) as current
                    from account_move
-                   where move_type = 'out_invoice' and DATE(invoice_date) = DATE(NOW()) and state = 'posted' and partner_id = '%s' 
-                   group by partner_id ''' % (partner.id))
+                   where DATE(invoice_date_due) >= DATE(NOW()) 
+                   and state = 'posted' 
+                   and partner_id = '%s'  ''' % (partner.id))
         current_rec = self.env.cr.dictfetchall()
-        if not current_rec:
+        if current_rec == [{'current': None}]:
             record.extend([{'current': 0.0}])
         else:
             record.extend(current_rec)
         self.env.cr.execute('''select sum(amount_residual) as due1
                             from account_move
-                            WHERE
-                            (date(now()) - invoice_date_due ) < 30 
-                            AND partner_id = '%s' 
-                            group by partner_id ''' % (partner.id))
+                            WHERE (date(now()) - invoice_date_due ) between 1 and 30 
+                            and state = 'posted'
+                            AND partner_id = '%s'  ''' % (partner.id))
         due1 = self.env.cr.dictfetchall()
-        if not due1:
+        if due1 == [{'due1': None}]:
             record.extend([{'due1': 0.0}])
         else:
             record.extend(due1)
         self.env.cr.execute('''select sum(amount_residual) as due2
                             from account_move
-                            WHERE
-                            (date(now()) - invoice_date_due ) > 30
-                            and  (date(now()) - invoice_date_due ) > 60
-                            AND partner_id = '%s' 
-                            group by partner_id ''' % (partner.id))
+                            WHERE (date(now()) - invoice_date_due ) between 30 and 60 
+                            and state = 'posted'
+                            AND partner_id = '%s' ''' % (partner.id))
         due2 = self.env.cr.dictfetchall()
-        if not due2:
+        if due2 == [{'due2': None}]:
             record.extend([{'due2': 0.0}])
         else:
             record.extend(due2)
         self.env.cr.execute('''select sum(amount_residual) as due3
                             from account_move
                             WHERE
-                            (date(now()) - invoice_date_due ) > 60
-                            and  (date(now()) - invoice_date_due ) > 90
-                            AND partner_id = '%s' 
-                            group by partner_id ''' % (partner.id))
+                            (date(now()) - invoice_date_due ) between 60
+                            and  90 
+                            and state = 'posted'
+                            AND partner_id = '%s'  ''' % (partner.id))
         due3 = self.env.cr.dictfetchall()
-        if not due3:
+        if due3 == [{'due3': None}]:
             record.extend([{'due3': 0.0}])
         else:
             record.extend(due3)
-        self.env.cr.execute('''select sum(amount_residual) as due4
+        self.env.cr.execute('''select  sum(amount_residual) as due4
                                     from account_move
                                     WHERE
-                                    (date(now()) - invoice_date_due ) > 90
-                                    and  (date(now()) - invoice_date_due ) > 120
-                                    AND partner_id = '%s' 
-                                    group by partner_id ''' % (partner.id))
+                                    (date(now()) - invoice_date_due ) between 90
+                                    and  120 
+                                    and state = 'posted'
+                                    AND partner_id = '%s'  ''' % (partner.id))
         due4 = self.env.cr.dictfetchall()
-        if not due4:
+        if due4 == [{'due4': None}]:
             record.extend([{'due4': 0.0}])
         else:
             record.extend(due4)
         self.env.cr.execute('''select sum(amount_residual) as due5
                                     from account_move
                                     WHERE
-                                    (date(now()) - invoice_date_due ) > 120
-                                    AND partner_id = '%s' 
-                                    group by partner_id ''' % (partner.id))
+                                    (date(now()) - invoice_date_due ) > 120 
+                                    and state = 'posted'
+                                    AND partner_id = '%s'  ''' % (partner.id))
         due5 = self.env.cr.dictfetchall()
-        if not due5:
+        if due5 == [{'due5': None}]:
             record.extend([{'due5': 0.0}])
         else:
             record.extend(due5)
         self.env.cr.execute('''select sum(amount_residual) as total
                                             from account_move
                                             WHERE partner_id = '%s' 
-                                            group by partner_id ''' % (
-            partner.id))
+                                            and state = 'posted'
+                                            group by partner_id ''' % (partner.id))
         total = self.env.cr.dictfetchall()
         if not total:
             record.extend([{'total': 0.0}])
