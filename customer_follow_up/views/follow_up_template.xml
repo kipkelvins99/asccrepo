@@ -84,6 +84,7 @@
                                             <td>
                                                 <span t-esc="model.report_new(options)[0]['symbol']"/>
                                                 <span t-esc="model.report_new(options)[7]['total']"/>
+
                                             </td>
                                         </tr>
                                     </tbody>
@@ -151,6 +152,7 @@
                                         <span t-att-data-id="line['id']" t-att-class="domainClass" t-att-title="line.get('title_hover')"
                                             t-att-data-account-code="line.get('code')">
                                             <t t-esc="line.get('name')"/>
+
                                         </span>
                                         <span class="js_account_report_line_footnote" t-att-data-id="line['id']"><sup t-if="line.get('footnote')"><b class="o_account_reports_footnote_sup"><a t-att-href="'#footnote'+line['footnote']"></a><t t-esc="line['footnote']"/></b></sup></span>
                                     </t>

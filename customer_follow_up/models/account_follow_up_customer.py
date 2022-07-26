@@ -247,4 +247,5 @@ class AccountFollowupCustomer(models.AbstractModel):
             record.extend([{'total': 0.0}])
         else:
             record.extend(total)
+        print(record,'pppppppppppp')
         return record
