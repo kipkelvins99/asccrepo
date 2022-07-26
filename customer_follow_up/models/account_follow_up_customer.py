@@ -1,6 +1,9 @@
+import dateutil.utils
+
 from odoo import models, fields, api
 from odoo.tools.translate import _
 from odoo.tools.misc import formatLang, format_date, get_lang
+from datetime import date
 
 
 class AccountFollowupCustomer(models.AbstractModel):
@@ -170,13 +173,28 @@ class AccountFollowupCustomer(models.AbstractModel):
     def report_new(self, options):
         partner = options.get('partner_id') and self.env['res.partner'].browse(
             options['partner_id']) or False
+        account_move = self.env['account.move'].search([('partner_id', '=', partner.id)])
+
+
+        for move in account_move:
+            account_payment = self.env['account.payment'].search(
+                [('partner_id', '=', partner.id), ('move_id', '=', move.id)])
+            print('acccc', account_payment)
+            if move.date == date.today():
+                print(move.amount_total)
         record = []
         record.extend([{'symbol': self.env.company.currency_id.symbol}])
-        self.env.cr.execute('''select sum(amount_residual) as current
+        # if
+        self.env.cr.execute('''select sum(amount_residual)  as current
                    from account_move
                    where DATE(invoice_date_due) >= DATE(NOW()) 
                    and state = 'posted' 
                    and partner_id = '%s'  ''' % (partner.id))
+        # self.env.cr.execute('''select sum(amount_residual) - sum(amount_untaxed_signed)  as current
+        #            from account_move
+        #            where DATE(invoice_date_due) >= DATE(NOW())
+        #            and state = 'posted'
+        #            and partner_id = '%s'  ''' % (partner.id))
         current_rec = self.env.cr.dictfetchall()
         if current_rec == [{'current': None}]:
             record.extend([{'current': 0.0}])
@@ -222,6 +240,7 @@ class AccountFollowupCustomer(models.AbstractModel):
                                     and state = 'posted'
                                     AND partner_id = '%s'  ''' % (partner.id))
         due4 = self.env.cr.dictfetchall()
+        print('due4', due4)
         if due4 == [{'due4': None}]:
             record.extend([{'due4': 0.0}])
         else:
@@ -237,15 +256,13 @@ class AccountFollowupCustomer(models.AbstractModel):
             record.extend([{'due5': 0.0}])
         else:
             record.extend(due5)
-        self.env.cr.execute('''select sum(amount_residual) as total
-                                            from account_move
-                                            WHERE partner_id = '%s' 
-                                            and state = 'posted'
-                                            group by partner_id ''' % (partner.id))
-        total = self.env.cr.dictfetchall()
+        # print("record", record)
+        # print("record", float(record[1]['current']) + float(record[2]['due1']) + float(record[3]['due2']) + float(record[4]['due3']) + float(record[5]['due4']) + float(record[6]['due5']))
+        total= round(float(record[1]['current']) + float(record[2]['due1']) + float(record[3]['due2']) + float(record[4]['due3']) + float(record[5]['due4']) + float(record[6]['due5']), 2)
+
+        # print("total", total)
         if not total:
             record.extend([{'total': 0.0}])
         else:
-            record.extend(total)
-        print(record,'pppppppppppp')
+            record.extend([{'total': total}])
         return record
