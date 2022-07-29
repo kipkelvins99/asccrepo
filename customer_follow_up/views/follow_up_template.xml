@@ -59,7 +59,7 @@
                                             style="text-align:center; white-space:nowrap;">
                                             <td class="o_account_report_line o_account_report_line_indent">
                                                 <span t-esc="model.report_new(options)[0]['symbol']"/>
-                                                <span t-esc="model.report_new(options)[1]['current']"/>
+<!--                                                <span t-esc="model.report_new(options)[1]['current']"/>-->
                                             </td>
                                             <td>
                                                 <span t-esc="model.report_new(options)[0]['symbol']"/>
