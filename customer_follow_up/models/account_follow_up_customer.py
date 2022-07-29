@@ -219,14 +219,14 @@ class AccountFollowupCustomer(models.AbstractModel):
                         current_rec = self.env.cr.dictfetchall()
                         if current_rec == [{'current': None}]:
                             record.extend([{'current': 0.0}])
-                            if move.date == date.today() and move.date == pay.date and pay.is_reconciled is False:
+                            if move.date == date.today() and move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound':
                                 amount_total = 0.0
                                 amount_total += move.amount_total
                                 current = float(record[1]['current']) - amount_total
                                 record[1]['current'] = current
                         elif current_rec != [{'current': None}]:
                             record.extend(current_rec)
-                            if move.date == date.today() and move.date == pay.date and pay.is_reconciled is False:
+                            if move.date == date.today() and move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound':
                                 amount_total = 0.0
                                 amount_total += move.amount_total
                                 current = round(float(record[1]['current']) - amount_total, 2)
@@ -239,14 +239,14 @@ class AccountFollowupCustomer(models.AbstractModel):
                         due1 = self.env.cr.dictfetchall()
                         if due1 == [{'due1': None}]:
                             record.extend([{'due1': 0.0}])
-                            if move.date == pay.date and pay.is_reconciled is False and 0 < difference_in_days <= 30:
+                            if move.date == pay.date and pay.is_reconciled is False and 0 < difference_in_days <= 30 and pay.payment_type == 'inbound':
                                 amount_total = 0.0
                                 amount_total += pay.amount
                                 due1 = round(float(record[2]['due1']) - amount_total, 2)
                                 record[2]['due1'] = due1
                         elif due1 != [{'due1': None}]:
                             record.extend(due1)
-                            if move.date == pay.date and pay.is_reconciled is False and 0 < difference_in_days <= 30:
+                            if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 0 < difference_in_days <= 30:
                                 amount_total = 0.0
                                 amount_total += pay.amount
                                 due1 = round(float(record[2]['due1']) - amount_total, 2)
@@ -259,14 +259,14 @@ class AccountFollowupCustomer(models.AbstractModel):
                         due2 = self.env.cr.dictfetchall()
                         if due2 == [{'due2': None}]:
                             record.extend([{'due2': 0.0}])
-                            if move.date == pay.date and pay.is_reconciled is False and 30 < difference_in_days <= 60:
+                            if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 30 < difference_in_days <= 60:
                                 amount_total = 0.0
                                 amount_total += pay.amount
                                 due2 = round(float(record[3]['due2']) - amount_total, 2)
                                 record[3]['due2'] = due2
                         elif due2 != [{'due2': None}]:
                             record.extend(due2)
-                            if move.date == pay.date and pay.is_reconciled is False and 30 < difference_in_days <= 60:
+                            if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 30 < difference_in_days <= 60:
                                 amount_total = 0.0
                                 amount_total += pay.amount
                                 due2 = round(float(record[2]['due2']) - amount_total, 2)
@@ -281,14 +281,14 @@ class AccountFollowupCustomer(models.AbstractModel):
                         due3 = self.env.cr.dictfetchall()
                         if due3 == [{'due3': None}]:
                             record.extend([{'due3': 0.0}])
-                            if move.date == pay.date and pay.is_reconciled is False and 60 < difference_in_days <= 90:
+                            if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 60 < difference_in_days <= 90:
                                 amount_total = 0.0
                                 amount_total += pay.amount
                                 due3 = round(float(record[4]['due3']) - amount_total, 2)
                                 record[4]['due3'] = due3
                         elif due3 != [{'due3': None}]:
                             record.extend(due3)
-                            if move.date == pay.date and pay.is_reconciled is False and 60 < difference_in_days <= 90:
+                            if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 60 < difference_in_days <= 90:
                                 amount_total = 0.0
                                 amount_total += pay.amount
                                 due3 = round(float(record[4]['due3']) - amount_total, 2)
@@ -303,14 +303,14 @@ class AccountFollowupCustomer(models.AbstractModel):
                         due4 = self.env.cr.dictfetchall()
                         if due4 == [{'due4': None}]:
                             record.extend([{'due4': 0.0}])
-                            if move.date == pay.date and pay.is_reconciled is False and 90 < difference_in_days <= 120:
+                            if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 90 < difference_in_days <= 120:
                                 amount_total = 0.0
                                 amount_total += pay.amount
                                 due4 = round(float(record[5]['due4']) - amount_total, 2)
                                 record[5]['due4'] = due4
                         elif due4 != [{'due4': None}]:
                             record.extend(due4)
-                            if move.date == pay.date and pay.is_reconciled is False and 90 < difference_in_days <= 120:
+                            if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 90 < difference_in_days <= 120:
                                 amount_total = 0.0
                                 amount_total += pay.amount
                                 due4 = round(float(record[5]['due4']) - amount_total, 2)
@@ -324,14 +324,14 @@ class AccountFollowupCustomer(models.AbstractModel):
                         due5 = self.env.cr.dictfetchall()
                         if due5 == [{'due5': None}]:
                             record.extend([{'due5': 0.0}])
-                            if move.date == pay.date and pay.is_reconciled is False and difference_in_days > 120:
+                            if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and difference_in_days > 120:
                                 amount_total = 0.0
                                 amount_total += pay.amount
                                 due5 = round(float(record[6]['due5']) - amount_total, 2)
                                 record[6]['due5'] = due5
                         elif due5 != [{'due5': None}]:
                             record.extend(due5)
-                            if move.date == pay.date and pay.is_reconciled is False and difference_in_days <= 30:
+                            if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and difference_in_days <= 30:
                                 amount_total = 0.0
                                 amount_total += pay.amount
                                 due5 = round(float(record[6]['due5']) - amount_total, 2)
