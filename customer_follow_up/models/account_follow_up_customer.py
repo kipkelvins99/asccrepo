@@ -194,7 +194,10 @@ class AccountFollowupCustomer(models.AbstractModel):
     def report_new(self, options):
         partner = options.get('partner_id') and self.env['res.partner'].browse(
             options['partner_id']) or False
-        account_move = self.env['account.move'].search([('partner_id', '=', partner.id)])
+        child_partner = self.env['res.partner'].search([('parent_id', '=', partner.id)])
+
+        account_move = self.env['account.move'].search(
+            ['|', ('partner_id', '=', partner.id), ('partner_id', 'in', child_partner.ids)])
         amount_total = 0.0
         difference_in_days = 0.0
         total = round(partner.total_due, 2)
@@ -210,216 +213,217 @@ class AccountFollowupCustomer(models.AbstractModel):
                     difference_in_days = (today_date - invoice_due).days
                 if account_payment:
                     for pay in account_payment:
+                        for child in child_partner:
+                            self.env.cr.execute('''select sum(amount_residual)  as current
+                                       from account_move
+                                       where DATE(invoice_date_due) >= DATE(NOW())
+                                       and partner_id = '%s'  ''' % partner.id)
+
+                            current_rec = self.env.cr.dictfetchall()
+                            if current_rec == [{'current': None}]:
+                                record.extend([{'current': 0.0}])
+                                if move.date == date.today() and move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound':
+                                    amount_total = 0.0
+                                    amount_total += move.amount_total
+                                    current = float(record[1]['current']) - amount_total
+                                    record[1]['current'] = current
+                            elif current_rec != [{'current': None}]:
+                                record.extend(current_rec)
+                                if move.date == date.today() and move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound':
+                                    amount_total = 0.0
+                                    amount_total += move.amount_total
+                                    current = round(float(record[1]['current']) - amount_total, 2)
+                                    record[1]['current'] = current
+                            self.env.cr.execute(
+                                '''select sum(amount_residual) as due1
+                                                from account_move
+                                                WHERE (date(now()) - invoice_date_due ) between 1 and 30
+                                                AND partner_id = '%s' OR  partner_id = '%s'
+                                                and state = 'posted' ''', [partner.id, child.id])
+                            due1 = self.env.cr.dictfetchall()
+                            if due1 == [{'due1': None}]:
+                                record.extend([{'due1': 0.0}])
+                                if move.date == pay.date and pay.is_reconciled is False and 0 < difference_in_days <= 30 and pay.payment_type == 'inbound':
+                                    amount_total = 0.0
+                                    amount_total += pay.amount
+                                    due1 = round(float(record[2]['due1']) - amount_total, 2)
+                                    record[2]['due1'] = due1
+                            elif due1 != [{'due1': None}]:
+                                record.extend(due1)
+                                if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 0 < difference_in_days <= 30:
+                                    amount_total = 0.0
+                                    amount_total += pay.amount
+                                    due1 = round(float(record[2]['due1']) - amount_total, 2)
+                                    record[2]['due1'] = due1
+                            self.env.cr.execute('''select sum(amount_residual) as due2
+                                                from account_move
+                                                WHERE (date(now()) - invoice_date_due ) between 30 and 60
+                                                and state = 'posted'
+                                                AND partner_id = '%s' ''' % partner.id)
+                            due2 = self.env.cr.dictfetchall()
+                            if due2 == [{'due2': None}]:
+                                record.extend([{'due2': 0.0}])
+                                if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 30 < difference_in_days <= 60:
+                                    amount_total = 0.0
+                                    amount_total += pay.amount
+                                    due2 = round(float(record[3]['due2']) - amount_total, 2)
+                                    record[3]['due2'] = due2
+                            elif due2 != [{'due2': None}]:
+                                record.extend(due2)
+                                if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 30 < difference_in_days <= 60:
+                                    amount_total = 0.0
+                                    amount_total += pay.amount
+                                    due2 = round(float(record[2]['due2']) - amount_total, 2)
+                                    record[3]['due2'] = due2
+                            self.env.cr.execute('''select sum(amount_residual) as due3
+                                                from account_move
+                                                WHERE
+                                                (date(now()) - invoice_date_due ) between 60
+                                                and  90
+                                                and state = 'posted'
+                                                AND partner_id = '%s'  ''' % partner.id)
+                            due3 = self.env.cr.dictfetchall()
+                            if due3 == [{'due3': None}]:
+                                record.extend([{'due3': 0.0}])
+                                if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 60 < difference_in_days <= 90:
+                                    amount_total = 0.0
+                                    amount_total += pay.amount
+                                    due3 = round(float(record[4]['due3']) - amount_total, 2)
+                                    record[4]['due3'] = due3
+                            elif due3 != [{'due3': None}]:
+                                record.extend(due3)
+                                if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 60 < difference_in_days <= 90:
+                                    amount_total = 0.0
+                                    amount_total += pay.amount
+                                    due3 = round(float(record[4]['due3']) - amount_total, 2)
+                                    record[4]['due3'] = due3
+                            self.env.cr.execute('''select  sum(amount_residual) as due4
+                                                        from account_move
+                                                        WHERE
+                                                        (date(now()) - invoice_date_due ) between 90
+                                                        and  120
+                                                        and state = 'posted'
+                                                        AND partner_id = '%s'  ''' % partner.id)
+                            due4 = self.env.cr.dictfetchall()
+                            if due4 == [{'due4': None}]:
+                                record.extend([{'due4': 0.0}])
+                                if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 90 < difference_in_days <= 120:
+                                    amount_total = 0.0
+                                    amount_total += pay.amount
+                                    due4 = round(float(record[5]['due4']) - amount_total, 2)
+                                    record[5]['due4'] = due4
+                            elif due4 != [{'due4': None}]:
+                                record.extend(due4)
+                                if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 90 < difference_in_days <= 120:
+                                    amount_total = 0.0
+                                    amount_total += pay.amount
+                                    due4 = round(float(record[5]['due4']) - amount_total, 2)
+                                    record[5]['due4'] = due4
+                            self.env.cr.execute('''select sum(amount_residual) as due5
+                                                        from account_move
+                                                        WHERE
+                                                        (date(now()) - invoice_date_due ) > 120
+                                                        and state = 'posted'
+                                                        AND partner_id = '%s'  ''' % partner.id)
+                            due5 = self.env.cr.dictfetchall()
+                            if due5 == [{'due5': None}]:
+                                record.extend([{'due5': 0.0}])
+                                if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and difference_in_days > 120:
+                                    amount_total = 0.0
+                                    amount_total += pay.amount
+                                    due5 = round(float(record[6]['due5']) - amount_total, 2)
+                                    record[6]['due5'] = due5
+                            elif due5 != [{'due5': None}]:
+                                record.extend(due5)
+                                if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and difference_in_days <= 30:
+                                    amount_total = 0.0
+                                    amount_total += pay.amount
+                                    due5 = round(float(record[6]['due5']) - amount_total, 2)
+                                    record[6]['due5'] = due5
+                            # total = round(float(record[1]['current']) + float(record[2]['due1']) + float(record[3]['due2']) + float(record[4]['due3']) + float(record[5]['due4']) + float(record[6]['due5']), 2)
+                            if not total:
+                                record.extend([{'total': 0.0}])
+                            else:
+                                record.extend([{'total': total}])
+                    else:
                         self.env.cr.execute('''select sum(amount_residual)  as current
-                                   from account_move
-                                   where DATE(invoice_date_due) >= DATE(NOW())
-                                   and state = 'posted'
-                                   and partner_id = '%s'  ''' % partner.id)
+                                                           from account_move
+                                                           where DATE(invoice_date_due) >= DATE(NOW())
+                                                           and state = 'posted'
+                                                           and partner_id = '%s'  ''' % partner.id)
 
                         current_rec = self.env.cr.dictfetchall()
                         if current_rec == [{'current': None}]:
                             record.extend([{'current': 0.0}])
-                            if move.date == date.today() and move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound':
-                                amount_total = 0.0
-                                amount_total += move.amount_total
-                                current = float(record[1]['current']) - amount_total
-                                record[1]['current'] = current
-                        elif current_rec != [{'current': None}]:
+                        else:
                             record.extend(current_rec)
-                            if move.date == date.today() and move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound':
-                                amount_total = 0.0
-                                amount_total += move.amount_total
-                                current = round(float(record[1]['current']) - amount_total, 2)
-                                record[1]['current'] = current
                         self.env.cr.execute('''select sum(amount_residual) as due1
-                                            from account_move
-                                            WHERE (date(now()) - invoice_date_due ) between 1 and 30
-                                            and state = 'posted'
-                                            AND partner_id = '%s'  ''' % partner.id)
+                                                                    from account_move
+                                                                    WHERE (date(now()) - invoice_date_due ) between 1 and 30
+                                                                    and state = 'posted'
+                                                                    AND partner_id = '%s'  ''' % partner.id)
                         due1 = self.env.cr.dictfetchall()
                         if due1 == [{'due1': None}]:
                             record.extend([{'due1': 0.0}])
-                            if move.date == pay.date and pay.is_reconciled is False and 0 < difference_in_days <= 30 and pay.payment_type == 'inbound':
-                                amount_total = 0.0
-                                amount_total += pay.amount
-                                due1 = round(float(record[2]['due1']) - amount_total, 2)
-                                record[2]['due1'] = due1
-                        elif due1 != [{'due1': None}]:
+
+                        else:
                             record.extend(due1)
-                            if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 0 < difference_in_days <= 30:
-                                amount_total = 0.0
-                                amount_total += pay.amount
-                                due1 = round(float(record[2]['due1']) - amount_total, 2)
-                                record[2]['due1'] = due1
+
                         self.env.cr.execute('''select sum(amount_residual) as due2
-                                            from account_move
-                                            WHERE (date(now()) - invoice_date_due ) between 30 and 60
-                                            and state = 'posted'
-                                            AND partner_id = '%s' ''' % partner.id)
+                                                                    from account_move
+                                                                    WHERE (date(now()) - invoice_date_due ) between 30 and 60
+                                                                    and state = 'posted'
+                                                                    AND partner_id = '%s' ''' % partner.id)
                         due2 = self.env.cr.dictfetchall()
                         if due2 == [{'due2': None}]:
                             record.extend([{'due2': 0.0}])
-                            if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 30 < difference_in_days <= 60:
-                                amount_total = 0.0
-                                amount_total += pay.amount
-                                due2 = round(float(record[3]['due2']) - amount_total, 2)
-                                record[3]['due2'] = due2
-                        elif due2 != [{'due2': None}]:
+
+                        else:
                             record.extend(due2)
-                            if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 30 < difference_in_days <= 60:
-                                amount_total = 0.0
-                                amount_total += pay.amount
-                                due2 = round(float(record[2]['due2']) - amount_total, 2)
-                                record[3]['due2'] = due2
+
                         self.env.cr.execute('''select sum(amount_residual) as due3
-                                            from account_move
-                                            WHERE
-                                            (date(now()) - invoice_date_due ) between 60
-                                            and  90
-                                            and state = 'posted'
-                                            AND partner_id = '%s'  ''' % partner.id)
+                                                                    from account_move
+                                                                    WHERE
+                                                                    (date(now()) - invoice_date_due ) between 60
+                                                                    and  90
+                                                                    and state = 'posted'
+                                                                    AND partner_id = '%s'  ''' % partner.id)
                         due3 = self.env.cr.dictfetchall()
                         if due3 == [{'due3': None}]:
                             record.extend([{'due3': 0.0}])
-                            if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 60 < difference_in_days <= 90:
-                                amount_total = 0.0
-                                amount_total += pay.amount
-                                due3 = round(float(record[4]['due3']) - amount_total, 2)
-                                record[4]['due3'] = due3
-                        elif due3 != [{'due3': None}]:
+
+                        else:
                             record.extend(due3)
-                            if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 60 < difference_in_days <= 90:
-                                amount_total = 0.0
-                                amount_total += pay.amount
-                                due3 = round(float(record[4]['due3']) - amount_total, 2)
-                                record[4]['due3'] = due3
+
                         self.env.cr.execute('''select  sum(amount_residual) as due4
-                                                    from account_move
-                                                    WHERE
-                                                    (date(now()) - invoice_date_due ) between 90
-                                                    and  120
-                                                    and state = 'posted'
-                                                    AND partner_id = '%s'  ''' % partner.id)
+                                                                            from account_move
+                                                                            WHERE
+                                                                            (date(now()) - invoice_date_due ) between 90
+                                                                            and  120
+                                                                            and state = 'posted'
+                                                                            AND partner_id = '%s'  ''' % partner.id)
                         due4 = self.env.cr.dictfetchall()
                         if due4 == [{'due4': None}]:
                             record.extend([{'due4': 0.0}])
-                            if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 90 < difference_in_days <= 120:
-                                amount_total = 0.0
-                                amount_total += pay.amount
-                                due4 = round(float(record[5]['due4']) - amount_total, 2)
-                                record[5]['due4'] = due4
-                        elif due4 != [{'due4': None}]:
+
+                        else:
                             record.extend(due4)
-                            if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and 90 < difference_in_days <= 120:
-                                amount_total = 0.0
-                                amount_total += pay.amount
-                                due4 = round(float(record[5]['due4']) - amount_total, 2)
-                                record[5]['due4'] = due4
                         self.env.cr.execute('''select sum(amount_residual) as due5
-                                                    from account_move
-                                                    WHERE
-                                                    (date(now()) - invoice_date_due ) > 120
-                                                    and state = 'posted'
-                                                    AND partner_id = '%s'  ''' % partner.id)
+                                                                            from account_move
+                                                                            WHERE
+                                                                            (date(now()) - invoice_date_due ) > 120
+                                                                            and state = 'posted'
+                                                                            AND partner_id = '%s'  ''' % partner.id)
                         due5 = self.env.cr.dictfetchall()
                         if due5 == [{'due5': None}]:
                             record.extend([{'due5': 0.0}])
-                            if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and difference_in_days > 120:
-                                amount_total = 0.0
-                                amount_total += pay.amount
-                                due5 = round(float(record[6]['due5']) - amount_total, 2)
-                                record[6]['due5'] = due5
-                        elif due5 != [{'due5': None}]:
+
+                        else:
                             record.extend(due5)
-                            if move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound' and difference_in_days <= 30:
-                                amount_total = 0.0
-                                amount_total += pay.amount
-                                due5 = round(float(record[6]['due5']) - amount_total, 2)
-                                record[6]['due5'] = due5
+
                         # total = round(float(record[1]['current']) + float(record[2]['due1']) + float(record[3]['due2']) + float(record[4]['due3']) + float(record[5]['due4']) + float(record[6]['due5']), 2)
                         if not total:
                             record.extend([{'total': 0.0}])
                         else:
                             record.extend([{'total': total}])
-                else:
-                    self.env.cr.execute('''select sum(amount_residual)  as current
-                                                       from account_move
-                                                       where DATE(invoice_date_due) >= DATE(NOW())
-                                                       and state = 'posted'
-                                                       and partner_id = '%s'  ''' % partner.id)
-
-                    current_rec = self.env.cr.dictfetchall()
-                    if current_rec == [{'current': None}]:
-                        record.extend([{'current': 0.0}])
-                    else:
-                        record.extend(current_rec)
-                    self.env.cr.execute('''select sum(amount_residual) as due1
-                                                                from account_move
-                                                                WHERE (date(now()) - invoice_date_due ) between 1 and 30
-                                                                and state = 'posted'
-                                                                AND partner_id = '%s'  ''' % partner.id)
-                    due1 = self.env.cr.dictfetchall()
-                    if due1 == [{'due1': None}]:
-                        record.extend([{'due1': 0.0}])
-
-                    else:
-                        record.extend(due1)
-
-                    self.env.cr.execute('''select sum(amount_residual) as due2
-                                                                from account_move
-                                                                WHERE (date(now()) - invoice_date_due ) between 30 and 60
-                                                                and state = 'posted'
-                                                                AND partner_id = '%s' ''' % partner.id)
-                    due2 = self.env.cr.dictfetchall()
-                    if due2 == [{'due2': None}]:
-                        record.extend([{'due2': 0.0}])
-
-                    else:
-                        record.extend(due2)
-
-                    self.env.cr.execute('''select sum(amount_residual) as due3
-                                                                from account_move
-                                                                WHERE
-                                                                (date(now()) - invoice_date_due ) between 60
-                                                                and  90
-                                                                and state = 'posted'
-                                                                AND partner_id = '%s'  ''' % partner.id)
-                    due3 = self.env.cr.dictfetchall()
-                    if due3 == [{'due3': None}]:
-                        record.extend([{'due3': 0.0}])
-
-                    else:
-                        record.extend(due3)
-
-                    self.env.cr.execute('''select  sum(amount_residual) as due4
-                                                                        from account_move
-                                                                        WHERE
-                                                                        (date(now()) - invoice_date_due ) between 90
-                                                                        and  120
-                                                                        and state = 'posted'
-                                                                        AND partner_id = '%s'  ''' % partner.id)
-                    due4 = self.env.cr.dictfetchall()
-                    if due4 == [{'due4': None}]:
-                        record.extend([{'due4': 0.0}])
-
-                    else:
-                        record.extend(due4)
-                    self.env.cr.execute('''select sum(amount_residual) as due5
-                                                                        from account_move
-                                                                        WHERE
-                                                                        (date(now()) - invoice_date_due ) > 120
-                                                                        and state = 'posted'
-                                                                        AND partner_id = '%s'  ''' % partner.id)
-                    due5 = self.env.cr.dictfetchall()
-                    if due5 == [{'due5': None}]:
-                        record.extend([{'due5': 0.0}])
-
-                    else:
-                        record.extend(due5)
-
-                    # total = round(float(record[1]['current']) + float(record[2]['due1']) + float(record[3]['due2']) + float(record[4]['due3']) + float(record[5]['due4']) + float(record[6]['due5']), 2)
-                    if not total:
-                        record.extend([{'total': 0.0}])
-                    else:
-                        record.extend([{'total': total}])
         return record
