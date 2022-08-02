@@ -197,10 +197,7 @@ class AccountFollowupCustomer(models.AbstractModel):
         child_partner = self.env['res.partner'].search([('parent_id', '=', partner.id)])
         partners_li= self.env['res.partner'].search(
             ['|', ('id', '=', partner.id), ('id', 'in', child_partner.ids)]).ids
-        print('partners_li', partners_li)
-        partners = tuple(i for i in partners_li)
-        print('partners',partners)
-        print('partners',type(partners[0]))
+
         account_move = self.env['account.move'].search(
             ['|', ('partner_id', '=', partner.id), ('partner_id', 'in', child_partner.ids)])
         amount_total = 0.0
@@ -219,14 +216,12 @@ class AccountFollowupCustomer(models.AbstractModel):
                     difference_in_days = (today_date - invoice_due).days
                 if account_payment:
                     for pay in account_payment:
-
                             self.env.cr.execute('''select sum(amount_residual) as current
-                                       from account_move
-                                       where DATE(invoice_date_due) >= DATE(NOW())
-                                       and partner_id IN %s''', (tuple(partners_li),))
+                                                   from account_move
+                                                   where DATE(invoice_date_due) >= DATE(NOW())
+                                                   and partner_id IN %s''', (tuple(partners_li),))
 
                             current_rec = self.env.cr.dictfetchall()
-                            print('llllllll', current_rec)
                             if current_rec == [{'current': None}]:
                                 record.extend([{'current': 0.0}])
                                 if move.date == date.today() and move.date == pay.date and pay.is_reconciled is False and pay.payment_type == 'inbound':
@@ -244,10 +239,10 @@ class AccountFollowupCustomer(models.AbstractModel):
                                     record[1]['current'] = current
                             self.env.cr.execute(
                                 '''select sum(amount_residual) as due1
-                                                from account_move
-                                                WHERE (date(now()) - invoice_date_due ) between 1 and 30
-                                                AND partner_id in %s 
-                                                and state = 'posted' ''', (tuple(partners_li),) )
+                                    from account_move
+                                    WHERE (date(now()) - invoice_date_due ) between 1 and 30
+                                    AND partner_id in %s 
+                                    and state = 'posted' ''', (tuple(partners_li),) )
                             due1 = self.env.cr.dictfetchall()
                             if due1 == [{'due1': None}]:
                                 record.extend([{'due1': 0.0}])
@@ -266,10 +261,10 @@ class AccountFollowupCustomer(models.AbstractModel):
                                     due1 = round(float(record[2]['due1']) - amount_total, 2)
                                     record[2]['due1'] = due1
                             self.env.cr.execute('''select sum(amount_residual) as due2
-                                                from account_move
-                                                WHERE (date(now()) - invoice_date_due ) between 30 and 60
-                                                and state = 'posted'
-                                                AND partner_id in %s ''', (tuple(partners_li),))
+                                                    from account_move
+                                                    WHERE (date(now()) - invoice_date_due ) between 30 and 60
+                                                    and state = 'posted'
+                                                    AND partner_id in %s ''', (tuple(partners_li),))
                             due2 = self.env.cr.dictfetchall()
                             if due2 == [{'due2': None}]:
                                 record.extend([{'due2': 0.0}])
@@ -288,12 +283,12 @@ class AccountFollowupCustomer(models.AbstractModel):
                                     due2 = round(float(record[2]['due2']) - amount_total, 2)
                                     record[3]['due2'] = due2
                             self.env.cr.execute('''select sum(amount_residual) as due3
-                                                from account_move
-                                                WHERE
-                                                (date(now()) - invoice_date_due ) between 60
-                                                and  90
-                                                and state = 'posted'
-                                                AND partner_id in %s  ''', (tuple(partners_li),))
+                                                    from account_move
+                                                    WHERE
+                                                    (date(now()) - invoice_date_due ) between 60
+                                                    and  90
+                                                    and state = 'posted'
+                                                    AND partner_id in %s  ''', (tuple(partners_li),))
                             due3 = self.env.cr.dictfetchall()
                             if due3 == [{'due3': None}]:
                                 record.extend([{'due3': 0.0}])
@@ -312,12 +307,12 @@ class AccountFollowupCustomer(models.AbstractModel):
                                     due3 = round(float(record[4]['due3']) - amount_total, 2)
                                     record[4]['due3'] = due3
                             self.env.cr.execute('''select  sum(amount_residual) as due4
-                                                        from account_move
-                                                        WHERE
-                                                        (date(now()) - invoice_date_due ) between 90
-                                                        and  120
-                                                        and state = 'posted'
-                                                        AND partner_id in %s  ''', (tuple(partners_li),))
+                                                    from account_move
+                                                    WHERE
+                                                    (date(now()) - invoice_date_due ) between 90
+                                                    and  120
+                                                    and state = 'posted'
+                                                    AND partner_id in %s  ''', (tuple(partners_li),))
                             due4 = self.env.cr.dictfetchall()
                             if due4 == [{'due4': None}]:
                                 record.extend([{'due4': 0.0}])
@@ -336,11 +331,11 @@ class AccountFollowupCustomer(models.AbstractModel):
                                     due4 = round(float(record[5]['due4']) - amount_total, 2)
                                     record[5]['due4'] = due4
                             self.env.cr.execute('''select sum(amount_residual) as due5
-                                                        from account_move
-                                                        WHERE
-                                                        (date(now()) - invoice_date_due ) > 120
-                                                        and state = 'posted'
-                                                        AND partner_id in %s  ''', (tuple(partners_li),))
+                                                    from account_move
+                                                    WHERE
+                                                    (date(now()) - invoice_date_due ) > 120
+                                                    and state = 'posted'
+                                                    AND partner_id in %s  ''', (tuple(partners_li),))
                             due5 = self.env.cr.dictfetchall()
                             if due5 == [{'due5': None}]:
                                 record.extend([{'due5': 0.0}])
@@ -358,19 +353,17 @@ class AccountFollowupCustomer(models.AbstractModel):
                                     amount_total += pay.amount
                                     due5 = round(float(record[6]['due5']) - amount_total, 2)
                                     record[6]['due5'] = due5
-                            # total = round(float(record[1]['current']) + float(record[2]['due1']) +
-                            # float(record[3]['due2']) + float(record[4]['due3']) + float(record[5]['due4']) +
-                            # float(record[6]['due5']), 2)
+
                             if not total:
                                 record.extend([{'total': 0.0}])
                             else:
                                 record.extend([{'total': total}])
                 else:
                     self.env.cr.execute('''select sum(amount_residual)  as current
-                                                       from account_move
-                                                       where DATE(invoice_date_due) >= DATE(NOW())
-                                                       and state = 'posted'
-                                                       and partner_id in %s  ''', (tuple(partners_li),))
+                                           from account_move
+                                           where DATE(invoice_date_due) >= DATE(NOW())
+                                           and state = 'posted'
+                                           and partner_id in %s  ''', (tuple(partners_li),))
 
                     current_rec = self.env.cr.dictfetchall()
                     if current_rec == [{'current': None}]:
@@ -378,10 +371,10 @@ class AccountFollowupCustomer(models.AbstractModel):
                     else:
                         record.extend(current_rec)
                     self.env.cr.execute('''select sum(amount_residual) as due1
-                                                                from account_move
-                                                                WHERE (date(now()) - invoice_date_due ) between 1 and 30
-                                                                and state = 'posted'
-                                                                AND partner_id in %s  ''', (tuple(partners_li),))
+                                            from account_move
+                                            WHERE (date(now()) - invoice_date_due ) between 1 and 30
+                                            and state = 'posted'
+                                            AND partner_id in %s  ''', (tuple(partners_li),))
                     due1 = self.env.cr.dictfetchall()
                     if due1 == [{'due1': None}]:
                         record.extend([{'due1': 0.0}])
@@ -390,10 +383,10 @@ class AccountFollowupCustomer(models.AbstractModel):
                         record.extend(due1)
 
                     self.env.cr.execute('''select sum(amount_residual) as due2
-                                                                from account_move
-                                                                WHERE (date(now()) - invoice_date_due ) between 30 and 60
-                                                                and state = 'posted'
-                                                                AND partner_id in %s ''', (tuple(partners_li),))
+                                            from account_move
+                                            WHERE (date(now()) - invoice_date_due ) between 30 and 60
+                                            and state = 'posted'
+                                            AND partner_id in %s ''', (tuple(partners_li),))
                     due2 = self.env.cr.dictfetchall()
                     if due2 == [{'due2': None}]:
                         record.extend([{'due2': 0.0}])
@@ -402,12 +395,12 @@ class AccountFollowupCustomer(models.AbstractModel):
                         record.extend(due2)
 
                     self.env.cr.execute('''select sum(amount_residual) as due3
-                                                                from account_move
-                                                                WHERE
-                                                                (date(now()) - invoice_date_due ) between 60
-                                                                and  90
-                                                                and state = 'posted'
-                                                                AND partner_id in %s  ''', (tuple(partners_li),))
+                                            from account_move
+                                            WHERE
+                                            (date(now()) - invoice_date_due ) between 60
+                                            and  90
+                                            and state = 'posted'
+                                            AND partner_id in %s  ''', (tuple(partners_li),))
                     due3 = self.env.cr.dictfetchall()
                     if due3 == [{'due3': None}]:
                         record.extend([{'due3': 0.0}])
@@ -416,12 +409,12 @@ class AccountFollowupCustomer(models.AbstractModel):
                         record.extend(due3)
 
                     self.env.cr.execute('''select  sum(amount_residual) as due4
-                                                                        from account_move
-                                                                        WHERE
-                                                                        (date(now()) - invoice_date_due ) between 90
-                                                                        and  120
-                                                                        and state = 'posted'
-                                                                        AND partner_id in %s  ''', (tuple(partners_li),))
+                                            from account_move
+                                            WHERE
+                                            (date(now()) - invoice_date_due ) between 90
+                                            and  120
+                                            and state = 'posted'
+                                            AND partner_id in %s  ''', (tuple(partners_li),))
                     due4 = self.env.cr.dictfetchall()
                     if due4 == [{'due4': None}]:
                         record.extend([{'due4': 0.0}])
