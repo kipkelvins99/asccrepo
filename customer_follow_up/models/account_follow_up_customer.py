@@ -92,7 +92,7 @@ class AccountFollowupCustomer(models.AbstractModel):
                 amount = aml.amount_residual_currency if aml.currency_id else aml.amount_residual
                 li.append(amount)
                 running_bal = li[0] + running_bal
-                format_float = "{:.2f}".format(running_bal)
+                format_float = "$ {:,.2f}".format(running_bal)
                 date_due = format_date(self.env, aml.date_maturity or aml.date,
                                        lang_code=lang_code)
                 total += not aml.blocked and amount or 0

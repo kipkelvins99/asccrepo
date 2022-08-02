@@ -6,7 +6,7 @@
             <div class="col-md-3 col-lg-2 col-xl-4" position="inside">
                 <br/>
                 <span>Credit Limit:
-                    <t t-esc="invoice_address_id.credit_limit"/>
+                    <t t-esc="'$ {:,.2f}'.format(invoice_address_id.credit_limit)"/>
                 </span>
                 <br/>
                 <span>Payment Term:
@@ -59,32 +59,32 @@
                                         <tr class="o_account_reports_default_style"
                                             style="text-align:center; white-space:nowrap;">
                                             <td class="o_account_report_line o_account_report_line_indent">
-                                                <span t-esc="report[0]['symbol']"/>
-                                                <span t-esc="report[1]['current']"/>
+                                                <!-- <span t-esc="report[0]['symbol']"/> -->
+                                                <span t-esc="'$ {:,.2f}'.format(report[1]['current'])"/>
                                             </td>
                                             <td>
-                                                <span t-esc="report[0]['symbol']"/>
-                                                <span t-esc="report[2]['due1']"/>
+                                                <!-- <span t-esc="report[0]['symbol']"/> -->
+                                                <span t-esc="'$ {:,.2f}'.format(report[2]['due1'])"/>
                                             </td>
                                             <td>
-                                                <span t-esc="report[0]['symbol']"/>
-                                                <span t-esc="report[3]['due2']"/>
+                                                <!-- <span t-esc="report[0]['symbol']"/> -->
+                                                <span t-esc="'$ {:,.2f}'.format(report[3]['due2'])"/>
                                             </td>
                                             <td>
-                                                <span t-esc="report[0]['symbol']"/>
-                                                <span t-esc="report[4]['due3']"/>
+                                                <!-- <span t-esc="report[0]['symbol']"/> -->
+                                                <span t-esc="'$ {:,.2f}'.format(report[4]['due3'])"/>
                                             </td>
                                             <td>
-                                                <span t-esc="report[0]['symbol']"/>
-                                                <span t-esc="report[5]['due4']"/>
+                                                <!-- <span t-esc="report[0]['symbol']"/> -->
+                                                <span t-esc="'$ {:,.2f}'.format(report[5]['due4'])"/>
                                             </td>
                                             <td>
-                                                <span t-esc="report[0]['symbol']"/>
-                                                <span t-esc="report[6]['due5']"/>
+                                                <!-- <span t-esc="report[0]['symbol']"/> -->
+                                                <span t-esc="'$ {:,.2f}'.format(report[6]['due5'])"/>
                                             </td>
                                             <td>
-                                                <span t-esc="report[0]['symbol']"/>
-                                                <span t-esc="report[7]['total']"/>
+                                                <!-- <span t-esc="report[0]['symbol']"/> -->
+                                                <span t-esc="'$ {:,.2f}'.format(report[7]['total'])"/>
 
                                             </td>
                                         </tr>
