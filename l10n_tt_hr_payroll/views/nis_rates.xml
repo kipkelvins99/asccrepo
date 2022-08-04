@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="nis_rates_view_tree" model="ir.ui.view">
+        <field name="name">nis.rates.tree</field>
+        <field name="model">nis.rates</field>
+        <field name="arch" type="xml">
+            <tree string="Channel" >
+                <field name="nis_deductible_percentage"/>
+                <field name="nis_maximum_age"/>
+                <field name="nis_minimum_age"/>
+                <field name="nis_employee_gl_account_number"/>
+                <field name="nis_employer_gl_account_number"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_nis_rates_form" model="ir.ui.view">
+            <field name="name">nis.rates.form</field>
+            <field name="model">nis.rates</field>
+            <field name="arch" type="xml">
+                <form string="NIS Rates">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="nis_deductible_percentage"/>
+                                <field name="nis_maximum_age"/>
+                                <field name="nis_employee_gl_account_number"/>
+
+                            </group>
+                            <group>
+                                <field name="nis_show_full_salary"/>
+                                <field name="nis_minimum_age"/>
+                                <field name="nis_employer_gl_account_number"/>
+
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+</odoo>
