@@ -22,17 +22,33 @@
                         <group>
                             <group>
                                 <field name="nis_deductible_percentage"/>
-                                <field name="nis_maximum_age"/>
+                                <field name="nis_minimum_age"/>
                                 <field name="nis_employee_gl_account_number"/>
 
                             </group>
                             <group>
                                 <field name="nis_show_full_salary"/>
-                                <field name="nis_minimum_age"/>
+                                <field name="nis_maximum_age"/>
                                 <field name="nis_employer_gl_account_number"/>
 
                             </group>
                         </group>
+                        <notebook>
+                            <page name="nis_rate" string="NIS">
+                                <field name="nis_line_ids">
+                                    <tree >
+                                        <field name="earnings_class"/>
+                                        <field name="weekly_earnings"/>
+                                        <field name="monthly_earnings"/>
+                                        <field name="avg_weekly_earnings"/>
+                                        <field name="employees_weekly_contri"/>
+                                        <field name="employers_weekly_contri"/>
+                                        <field name="total_weekly_contri"/>
+                                        <field name="class_weekly"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
             </field>

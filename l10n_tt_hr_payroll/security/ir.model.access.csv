@@ -2,3 +2,4 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_nis_rates,access_nis_rates,model_nis_rates,base.group_user,1,1,1,1
 access_paye_rates,access_paye_rates,model_paye_rates,base.group_user,1,1,1,1
 access_health_surcharge_rates,access_health_surcharge_rates,model_health_surcharge_rates,base.group_user,1,1,1,1
+access_nis_rates_lines,access_nis_rates_lines,model_nis_rates_lines,base.group_user,1,1,1,1

@@ -12,6 +12,7 @@
         'views/health_surcharge_rates.xml',
         'views/nis_rates.xml',
         'views/paye_rates.xml',
+        'demo/nis_rates_data.xml',
     ],
 
     'installable': True,

@@ -8,7 +8,7 @@
                 <field name="health_surcharge_minimum_age"/>
                 <field name="health_surcharge_account_number"/>
                 <field name="health_surcharge_maximum_age"/>
-                
+
             </tree>
         </field>
     </record>
