@@ -6,8 +6,8 @@
         <field name="arch" type="xml">
             <tree string="Channel" >
                 <field name="nis_deductible_percentage"/>
-                <field name="nis_maximum_age"/>
                 <field name="nis_minimum_age"/>
+                <field name="nis_maximum_age"/>
                 <field name="nis_employee_gl_account_number"/>
                 <field name="nis_employer_gl_account_number"/>
             </tree>
