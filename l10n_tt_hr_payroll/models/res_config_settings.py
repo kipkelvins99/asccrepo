@@ -27,6 +27,7 @@ class ResConfigSettings(models.TransientModel):
     health_surcharge_account_number = fields.Char(string='Account No')
     health_surcharge_account_number = fields.Char(string='Account No')
 
+
     # set_values method
     def set_values(self):
         res = super(ResConfigSettings, self).set_values()

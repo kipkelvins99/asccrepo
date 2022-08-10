@@ -22,8 +22,8 @@
                                             <div>
                                                 <span class="o_form_label">% Deductible</span>
                                                 <field name="nis_deductible_percentage"/>
-                                            </div>
-                                            <div>
+<!--                                            </div>-->
+<!--                                            <div>-->
                                                 <span class="o_form_label">Minimum Age</span>
                                                 <field name="nis_minimum_age"/>
                                             </div>

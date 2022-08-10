@@ -6,7 +6,7 @@ class HrEmployee(models.Model):
     _inherit = 'hr.employee'
     _description = 'Employee'
 
-    date_of_birth = fields.Date(string="Date Of Birth")
+    date_of_birth = fields.Date(string="Date Of Birth", required=True)
     age = fields.Char(string="Age", compute="compute_age", store=True)
 
     @api.depends('date_of_birth')
