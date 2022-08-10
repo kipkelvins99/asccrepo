@@ -28,8 +28,38 @@ class ResConfigSettings(models.TransientModel):
     # set_values method
     def set_values(self):
         res = super(ResConfigSettings, self).set_values()
-        self.env['ir.config_parameter'].sudo().set_param('l10n_tt_hr_payroll.nis_deductible_percentage', self.nis_deductible_percentage)
-        # self.env['ir.config_parameter'].sudo().set_param('l10n_tt_hr_payroll.product_bom', self.product_bom)
+        self.env['ir.config_parameter'].sudo().set_param('l10n_tt_hr_payroll.nis_deductible_percentage',
+                                                         self.nis_deductible_percentage)
+        self.env['ir.config_parameter'].sudo().set_param('l10n_tt_hr_payroll.nis_maximum_age', self.nis_maximum_age)
+        self.env['ir.config_parameter'].sudo().set_param('l10n_tt_hr_payroll.nis_minimum_age', self.nis_minimum_age)
+        self.env['ir.config_parameter'].sudo().set_param('l10n_tt_hr_payroll.nis_employee_gl_account_number',
+                                                         self.nis_employee_gl_account_number)
+        self.env['ir.config_parameter'].sudo().set_param('l10n_tt_hr_payroll.nis_employer_gl_account_number',
+                                                         self.nis_employer_gl_account_number)
+        self.env['ir.config_parameter'].sudo().set_param('l10n_tt_hr_payroll.nis_show_full_salary',
+                                                         self.nis_show_full_salary)
+        self.env['ir.config_parameter'].sudo().set_param('l10n_tt_hr_payroll.paye_personal_deduction',
+                                                         self.paye_personal_deduction)
+        self.env['ir.config_parameter'].sudo().set_param('l10n_tt_hr_payroll.paye_senior_citizen_deduction',
+                                                         self.paye_senior_citizen_deduction)
+        self.env['ir.config_parameter'].sudo().set_param('l10n_tt_hr_payroll.paye_mortgage_limit',
+                                                         self.paye_mortgage_limit)
+        self.env['ir.config_parameter'].sudo().set_param('l10n_tt_hr_payroll.paye_tertiary_education_limit',
+                                                         self.paye_tertiary_education_limit)
+        self.env['ir.config_parameter'].sudo().set_param('l10n_tt_hr_payroll.paye_account_number',
+                                                         self.paye_account_number)
+        self.env['ir.config_parameter'].sudo().set_param('l10n_tt_hr_payroll.paye_alimony_limit',
+                                                         self.paye_alimony_limit)
+        self.env['ir.config_parameter'].sudo().set_param('l10n_tt_hr_payroll.paye_senior_citizen_age',
+                                                         self.paye_senior_citizen_age)
+        self.env['ir.config_parameter'].sudo().set_param('l10n_tt_hr_payroll.paye_other_annuities_limit',
+                                                         self.paye_other_annuities_limit)
+        self.env['ir.config_parameter'].sudo().set_param('l10n_tt_hr_payroll.health_surcharge_minimum_age',
+                                                         self.health_surcharge_minimum_age)
+        self.env['ir.config_parameter'].sudo().set_param('l10n_tt_hr_payroll.health_surcharge_maximum_age',
+                                                         self.health_surcharge_maximum_age)
+        self.env['ir.config_parameter'].sudo().set_param('l10n_tt_hr_payroll.health_surcharge_account_number',
+                                                         self.health_surcharge_account_number)
         return res
 
     # get_values method
@@ -38,10 +68,56 @@ class ResConfigSettings(models.TransientModel):
         res = super(ResConfigSettings, self).get_values()
 
         # with_user = self.env['ir.config_parameter'].sudo()
-        nis_deductible_percentage = self.env['ir.config_parameter'].sudo().get_param('l10n_tt_hr_payroll.nis_deductible_percentage')
-        # product_bom = self.env['ir.config_parameter'].sudo().get_param('l10n_tt_hr_payroll.product_bom')
+        nis_deductible_percentage = self.env['ir.config_parameter'].sudo().get_param(
+            'l10n_tt_hr_payroll.nis_deductible_percentage')
+        nis_maximum_age = self.env['ir.config_parameter'].sudo().get_param('l10n_tt_hr_payroll.nis_maximum_age')
+        nis_minimum_age = self.env['ir.config_parameter'].sudo().get_param('l10n_tt_hr_payroll.nis_minimum_age')
+        nis_employee_gl_account_number = self.env['ir.config_parameter'].sudo().get_param(
+            'l10n_tt_hr_payroll.nis_employee_gl_account_number')
+        nis_employer_gl_account_number = self.env['ir.config_parameter'].sudo().get_param(
+            'l10n_tt_hr_payroll.nis_employer_gl_account_number')
+        nis_show_full_salary = self.env['ir.config_parameter'].sudo().get_param(
+            'l10n_tt_hr_payroll.nis_show_full_salary')
+        paye_personal_deduction = self.env['ir.config_parameter'].sudo().get_param(
+            'l10n_tt_hr_payroll.paye_personal_deduction')
+        paye_senior_citizen_deduction = self.env['ir.config_parameter'].sudo().get_param(
+            'l10n_tt_hr_payroll.paye_senior_citizen_deduction')
+        paye_mortgage_limit = self.env['ir.config_parameter'].sudo().get_param('l10n_tt_hr_payroll.paye_mortgage_limit')
+        paye_tertiary_education_limit = self.env['ir.config_parameter'].sudo().get_param(
+            'l10n_tt_hr_payroll.paye_tertiary_education_limit')
+        paye_account_number = self.env['ir.config_parameter'].sudo().get_param('l10n_tt_hr_payroll.paye_account_number')
+        paye_alimony_limit = self.env['ir.config_parameter'].sudo().get_param('l10n_tt_hr_payroll.paye_alimony_limit')
+        paye_senior_citizen_age = self.env['ir.config_parameter'].sudo().get_param(
+            'l10n_tt_hr_payroll.paye_senior_citizen_age')
+        paye_other_annuities_limit = self.env['ir.config_parameter'].sudo().get_param(
+            'l10n_tt_hr_payroll.paye_other_annuities_limit')
+        health_surcharge_minimum_age = self.env['ir.config_parameter'].sudo().get_param(
+            'l10n_tt_hr_payroll.health_surcharge_minimum_age')
+        health_surcharge_maximum_age = self.env['ir.config_parameter'].sudo().get_param(
+            'l10n_tt_hr_payroll.health_surcharge_maximum_age')
+        health_surcharge_account_number = self.env['ir.config_parameter'].sudo().get_param(
+            'l10n_tt_hr_payroll.health_surcharge_account_number')
+        health_surcharge_account_number = self.env['ir.config_parameter'].sudo().get_param(
+            'l10n_tt_hr_payroll.health_surcharge_account_number')
         res.update(
             # product_bom_ids=[(6, 0, literal_eval(nis_deductible_percentage))] if nis_deductible_percentage else False,
-            nis_deductible_percentage=nis_deductible_percentage
+            nis_deductible_percentage=nis_deductible_percentage,
+            nis_maximum_age=nis_maximum_age,
+            nis_minimum_age=nis_minimum_age,
+            nis_employee_gl_account_number=nis_employee_gl_account_number,
+            nis_employer_gl_account_number=nis_employer_gl_account_number,
+            nis_show_full_salary=nis_show_full_salary,
+            paye_personal_deduction=paye_personal_deduction,
+            paye_senior_citizen_deduction=paye_senior_citizen_deduction,
+            paye_mortgage_limit=paye_mortgage_limit,
+            paye_tertiary_education_limit=paye_tertiary_education_limit,
+            paye_account_number=paye_account_number,
+            paye_senior_citizen_age=paye_senior_citizen_age,
+            paye_alimony_limit=paye_alimony_limit,
+            paye_other_annuities_limit=paye_other_annuities_limit,
+            health_surcharge_minimum_age=health_surcharge_minimum_age,
+            health_surcharge_maximum_age=health_surcharge_maximum_age,
+            health_surcharge_account_number=health_surcharge_account_number
+
         )
         return res

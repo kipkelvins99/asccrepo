@@ -16,8 +16,8 @@
             <field name="nis_minimum_age">16</field>
             <field name="nis_maximum_age">65</field>
             <field name="nis_line_ids"
-                   eval="[(5, 0), (0, 0, {'earnings_class': 1, 'weekly_earnings': '200-339.99', 'monthly_earnings':
-                   '867.00-1472.99', 'avg_weekly_earnings': 270.00, 'employees_weekly_contri': 11.90,
+                   eval="[(5, 0), (0, 0, {'earnings_class': 1, 'weekly_earnings': '200 - 339.99', 'monthly_earnings':
+                   '867.00 - 1472.99', 'avg_weekly_earnings': 270.00, 'employees_weekly_contri': 11.90,
                    'employers_weekly_contri': 23.80, 'total_weekly_contri': 35.70, 'class_weekly':1.79}),
                    (0, 0, {'earnings_class': 2, 'weekly_earnings': '340.00 - 449.99', 'monthly_earnings':
                     '1473.00 - 1949.99', 'avg_weekly_earnings': 395.00, 'employees_weekly_contri': '17.40',

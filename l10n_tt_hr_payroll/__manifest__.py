@@ -14,7 +14,7 @@
         'views/paye_rates.xml',
         'demo/nis_rates_data.xml',
         'views/res_config_settings_view.xml',
-        'data/nis_salary_rule_demo.xml',
+        'data/salary_rule_demo.xml',
         'views/hr_payroll.xml',
         'views/hr_employee_view.xml'
 

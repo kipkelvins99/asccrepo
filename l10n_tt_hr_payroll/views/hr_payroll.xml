@@ -11,6 +11,7 @@
             <xpath expr="//field[@name='number']" position="after">
                 <field name="health_rate" invisible="1"/>
                 <field name="paye_rate" invisible="1"/>
+                <field name="nis_rate" invisible="1"/>
             </xpath>
         </field>
     </record>
