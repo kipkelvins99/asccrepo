@@ -24,6 +24,8 @@ class ResConfigSettings(models.TransientModel):
     health_surcharge_minimum_age = fields.Integer(string='Minimum Age')
     health_surcharge_maximum_age = fields.Integer(string='Maximum Age')
     health_surcharge_account_number = fields.Char(string='Account No')
+    health_surcharge_account_number = fields.Char(string='Account No')
+    health_surcharge_account_number = fields.Char(string='Account No')
 
     # set_values method
     def set_values(self):

@@ -4,6 +4,7 @@ from odoo import api, fields, models, _
 class PayeRates(models.Model):
     _name = 'paye.rates'
     _description = 'Paye Rates'
+    _rec_name = 'id'
 
     paye_personal_deduction = fields.Float('Personal Deduction')
     paye_senior_citizen_deduction = fields.Float('Senior Citizen Deduction ')

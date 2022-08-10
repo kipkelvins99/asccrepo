@@ -4,6 +4,7 @@ from odoo import api, fields, models, _
 class NISRates(models.Model):
     _name = 'nis.rates'
     _description = 'NIS Rates'
+    _rec_name = 'id'
 
     nis_deductible_percentage = fields.Integer('% Deductible')
     nis_maximum_age = fields.Integer('Maximum Age')

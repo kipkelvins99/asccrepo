@@ -9,7 +9,8 @@
             <field name="inherit_id" ref="base.res_config_settings_view_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//div[hasclass('settings')]" position="inside">
-                    <div class="app_settings_block" data-string="Payroll" string="NIS RATES"  data-key="hr_payroll" groups="hr_payroll.group_hr_payroll_manager">
+                    <div class="app_settings_block" data-string="Payroll" string="NIS RATES" data-key="hr_payroll"
+                         groups="hr_payroll.group_hr_payroll_manager">
                         <h2>NIS Rates</h2>
                         <div class="row mt16 o_settings_container">
                             <div class="col-12 col-lg-6 o_setting_box">
@@ -48,7 +49,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="app_settings_block" data-string="Payroll" string="PAYE RATES"  data-key="hr_payroll" groups="hr_payroll.group_hr_payroll_manager">
+                        <div class="app_settings_block" data-string="Payroll" string="PAYE RATES" data-key="hr_payroll"
+                             groups="hr_payroll.group_hr_payroll_manager">
                             <h2>PAYE Rates</h2>
                             <div class="row mt16 o_settings_container">
                                 <div class="col-12 col-lg-6 o_setting_box">
@@ -96,33 +98,34 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="app_settings_block" data-string="Payroll" string="Health Surcharge Rates" data-key="hr_payroll" groups="hr_payroll.group_hr_payroll_manager" >
-                        <h2>Health Surcharge Rate</h2>
+                        <div class="app_settings_block" data-string="Payroll" string="Health Surcharge Rates"
+                             data-key="hr_payroll" groups="hr_payroll.group_hr_payroll_manager">
+                            <h2>Health Surcharge Rate</h2>
 
-                        <div class="row mt16 o_settings_container">
-                            <div class="col-12 col-lg-6 o_setting_box">
-                                <div class="o_setting_left_pane"/>
-                                <div>
-                                    <div class="o_setting_right_pane">
-                                        <div class="text-muted content-group mt16">
-                                            <div>
-                                                <span class="o_form_label">Minimum Age</span>
-                                                <field name="health_surcharge_minimum_age"/>
+                            <div class="row mt16 o_settings_container">
+                                <div class="col-12 col-lg-6 o_setting_box">
+                                    <div class="o_setting_left_pane"/>
+                                    <div>
+                                        <div class="o_setting_right_pane">
+                                            <div class="text-muted content-group mt16">
+                                                <div>
+                                                    <span class="o_form_label">Minimum Age</span>
+                                                    <field name="health_surcharge_minimum_age"/>
+                                                </div>
+                                                <div>
+                                                    <span class="o_form_label">Maximum Age</span>
+                                                    <field name="health_surcharge_maximum_age"/>
+                                                </div>
+                                                <div>
+                                                    <span class="o_form_label">Account No</span>
+                                                    <field name="health_surcharge_account_number"/>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <span class="o_form_label">Maximum Age</span>
-                                                <field name="health_surcharge_maximum_age"/>
-                                            </div>
-                                            <div>
-                                                <span class="o_form_label">Account No</span>
-                                                <field name="health_surcharge_account_number"/>
-                                            </div>
+                                            <div/>
                                         </div>
-                                        <div/>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         </div>
                     </div>
                 </xpath>
