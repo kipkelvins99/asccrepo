@@ -14,7 +14,7 @@
             'security/ir.model.access.csv',
             'wizard/td4_report_wizard_view.xml',
             'views/year_periods_view.xml',
-            'views/report_employee.xml',
+            'report/report_employee.xml',
             'views/employee_report.xml',
             'views/assets.xml',
             'views/hr_employee_view.xml',

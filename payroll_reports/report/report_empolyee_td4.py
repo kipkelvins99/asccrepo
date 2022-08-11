@@ -1,7 +1,7 @@
 from odoo import api, fields, models, _
 
 
-class DentalAppointmentReport(models.AbstractModel):
+class TD4Report(models.AbstractModel):
     _name = 'report.payroll_reports.report_employee'
 
     @api.model
