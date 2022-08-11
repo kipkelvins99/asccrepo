@@ -6,13 +6,13 @@
             <field name="model">td4.report.wizard</field>
             <field name="arch" type="xml">
                 <form>
-                    <group>
-                        <label for="date_start" string="Period"/>
-                        <div>
-                            From<field name="date_start" class="oe_inline col-sm-5"/>
-                            to<field name="date_end" class="oe_inline col-sm-5"/>
-                        </div>
-                    </group>
+<!--                    <group>-->
+<!--                        <label for="date_start" string="Period"/>-->
+<!--                        <div>-->
+<!--                            From<field name="date_start" class="oe_inline col-sm-5"/>-->
+<!--                            to<field name="date_end" class="oe_inline col-sm-5"/>-->
+<!--                        </div>-->
+<!--                    </group>-->
                         <group>
                             <field name="employee_ids" widget="many2many_tags" />
                             <field name="year" />
