@@ -73,8 +73,8 @@
                                             </div>
                                             <div class="employee_address">
                                                 <span class="content-span">
-                                                    <div name="company_address" class="">
-                                                        <span class="company_address" t-field="o.address_home_id" t-options='{"widget": "contact", "fields": ["address"], "no_marker": true}'/>
+                                                    <div name="employee_address" class="">
+                                                        <span class="employee_address" t-field="o.address_home_id" t-options='{"widget": "contact", "fields": ["address"], "no_marker": true}'/>
                                                     </div>
                                                 </span>
                                             </div>

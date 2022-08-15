@@ -8,8 +8,6 @@ class HrEmployee(models.Model):
 
     bir_file_number = fields.Char('BIR File Number')
     nis_number = fields.Char('NIS Number')
-    deduction_year_ids = fields.One2many('deduction.years', 'employee_id', string='Deduction')
-    basic_salary = fields.Float('Basic Salary')
     number_of_weeks_at_8_25 = fields.Float('Number of weeks at $8.25')
     number_of_weeks_at_4_80 = fields.Float('Number of weeks at $4.80')
 
@@ -25,7 +23,8 @@ class HrEmployee(models.Model):
 
     def _get_report_base_filename(self):
         """This function is used for to get the report file name"""
-        self.ensure_one()
+
+        # self.ensure_one()
         return 'TD4 Report-%s' % (self.name)
 
     def get_remuneration(self):
@@ -34,12 +33,12 @@ class HrEmployee(models.Model):
 
     def get_total_deduction(self, year):
         """The function return the value for Total Deductions as per TD1"""
-        deduction_year = self.deduction_year_ids.filtered(lambda d: d.year == str(year))
-        # print(year,'year')
-        if deduction_year:
-            return deduction_year.deduction_amount
-        else:
-            return 0
+        # deduction_year = self.deduction_year_ids.filtered(lambda d: d.year == str(year))
+        # # print(year,'year')
+        # if deduction_year:
+        #     return deduction_year.deduction_amount
+        # else:
+        return 0
 
     def calculate_gross_earnings(self):
         """The function return the gross earnings"""
@@ -56,24 +55,58 @@ class HrEmployee(models.Model):
 
         # National Insurance deducted = Employee's weekly contribution rate x number of
         # the 52 weeks worked (Round to nearest) No cent value.
-
-        payslip = self.env['hr.payslip.line'].search(
-            [('employee_id', '=', self.id), ('salary_rule_id', '=', 18)])
+        print(self, 'employees')
+        payslip = self.env['hr.payslip'].search([('state', '!=', 'cancel'), ('employee_id', '=', self.id)])
         nis_amount = 0.0
-        for line in payslip:
-            if str(line.date_from.year) == str(year):
-                nis_amount += line.amount
+        for line in payslip.line_ids:
+            if line.salary_rule_id.id == 18 and str(line.date_from.year) == str(year):
+                nis_amount += line.total
+
         return abs(nis_amount)
 
     def get_income_tax_deduction(self, gross_earning, total_deduction_as_per_td1, year):
         """The function returns the income tax deduction"""
         # Gross Earnings - Total Deductions as per TD1 * 0.25
-        payslip = self.env['hr.payslip.line'].search(
-            [('employee_id', '=', self.id), ('salary_rule_id', '=', 16)])
+
         paye_amount = 0.0
-        for line in payslip:
-            if str(line.date_from.year) == str(year):
-                paye_amount += line.amount
+        nis_amount = 0.0
+        basic_salary = 0.0
+        allowances = 0.0
+        income_received_to_date = 0.0
+        sum_of_monthly_additions = 0.0
+        projected_income = 0.0
+        no_of_payslips_in_year = 0
+        no_of_payslips_left_year = 0
+
+        payslip = self.env['hr.payslip'].search([('state', '!=', 'cancel'), ('employee_id', '=', self.id)])
+
+
+        for pay in payslip:
+            if str(pay.date_from.year) == str(year):
+                no_of_payslips_in_year += 1
+            no_of_payslips_left_year = 12 - no_of_payslips_in_year
+
+            for line in pay.line_ids:
+
+                if line.salary_rule_id.id == 1 and str(line.date_from.year) == str(year):
+                    basic_salary += line.total
+                if line.category_id.id == 2 and str(line.date_from.year) == str(year):
+                    allowances += line.total
+                income_received_to_date = basic_salary + allowances
+                projected_income = (self.contract_id.wage) * no_of_payslips_left_year
+
+
+        # Income Received to Date = (Sum of all Salary received to date (taken from this year's payslips)) +
+        # (Sum of all additions received to date (taken from this year's payslips)
+        # Projected Income = (Basic Salary + (Sum of Monthly Additions)) *Number of months left in the year
+        # Annual Income = Projected Income + Income Received to Date
+        # Deductions paid to Date = (Sum of all Deductions (taken from this year's payslips. This includes 70% of NIS))
+        # Projected Deductions = (Sum of Monthly Deductions (This includes 70 % of NIS)) *Number of months left in the year
+        # Annual Deductions = Projected Deductions + Deductions paid to Date + Personal Allowance
+        # Annual Taxable Income = Annual Income - Annual Deductions
+        # Annual PAYE = Annual Taxable Income * PAYE Rate(0.25 or 0.3)
+        # Monthly PAYE = (Annual PAYE - PAYE paid to date) / (Number of months left in the year)
+
         return abs(paye_amount)
 
     def get_health_surcharge_deducted(self, year):
@@ -86,34 +119,9 @@ class HrEmployee(models.Model):
         # else:
         #     return 0
 
-        payslip = self.env['hr.payslip.line'].search([('employee_id', '=', self.id), ('salary_rule_id', '=', 17)])
+        payslip = self.env['hr.payslip'].search([('state', '!=', 'cancel'), ('employee_id', '=', self.id)])
         health_amount = 0.0
-        for line in payslip:
-            if str(line.date_from.year) == str(year):
-                health_amount += line.amount
+        for line in payslip.line_ids:
+            if line.salary_rule_id.id == 17 and str(line.date_from.year) == str(year):
+                health_amount += line.total
         return abs(health_amount)
-
-
-class DeductionYears(models.Model):
-    _name = 'deduction.years'
-    _description = 'Deduction Years'
-
-    def _get_years(self):
-        return [(str(i), i) for i in range(2020, fields.Date.today().year + 10, 1)]
-
-    year = fields.Selection(selection='_get_years', string='Year', required=True,
-                            default=lambda x: str(fields.Date.today().year - 1))
-
-    deduction_amount = fields.Float('Deduction', compute='_compute_deduction', store=True)
-    employee_id = fields.Many2one('hr.employee')
-
-    # @api.depends()
-    # def _compute_deduction(self, year):
-    #     print('_compute_deduction', year)
-
-
-# class NationalInsuranceContribution(models.Model):
-#     _name = 'national.insurance.contribution'
-#
-#     earning_range = fields.Char('Monthly Earnings')
-#     contribution_rate = fields.Float("Employee's weekly contribution rate")
