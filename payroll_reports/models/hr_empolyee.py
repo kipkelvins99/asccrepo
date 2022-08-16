@@ -24,7 +24,7 @@ class HrEmployee(models.Model):
     def _get_report_base_filename(self):
         """This function is used for to get the report file name"""
 
-        # self.ensure_one()
+        self.ensure_one()
         return 'TD4 Report-%s' % (self.name)
 
     def get_remuneration(self):
@@ -77,6 +77,18 @@ class HrEmployee(models.Model):
         projected_income = 0.0
         no_of_payslips_in_year = 0
         no_of_payslips_left_year = 0
+        annual_income = 0.0
+        deductions_paid_to_date = 0.0
+        sum_of_all_deductions = 0.0
+        projected_deductions = 0.0
+        sum_of_monthly_deductions = 0.0
+        annual_deductions = 0.0
+        deductions = 0.0
+        annual_taxable_income = 0.0
+        annual_paye = 0.0
+        paye_rate =0.0
+        monthly_paye = 0.0
+        paye_paid_to_date = 0.0
 
         payslip = self.env['hr.payslip'].search([('state', '!=', 'cancel'), ('employee_id', '=', self.id)])
 
@@ -85,15 +97,41 @@ class HrEmployee(models.Model):
             if str(pay.date_from.year) == str(year):
                 no_of_payslips_in_year += 1
             no_of_payslips_left_year = 12 - no_of_payslips_in_year
+            if (self.contract_id.wage * 12) <= 100000:
+                paye_rate = 0.25
+            else :
+                paye_rate = 0.30
 
             for line in pay.line_ids:
 
                 if line.salary_rule_id.id == 1 and str(line.date_from.year) == str(year):
                     basic_salary += line.total
+                if line.salary_rule_id.id == 16 and str(line.date_from.year) == str(year):
+
+                    paye_paid_to_date += line.total
+                print(paye_paid_to_date, 'paye_paid_to_date')
                 if line.category_id.id == 2 and str(line.date_from.year) == str(year):
                     allowances += line.total
-                income_received_to_date = basic_salary + allowances
-                projected_income = (self.contract_id.wage) * no_of_payslips_left_year
+                elif line.category_id.id == 4 and str(line.date_from.year) == str(year):
+                    deductions += line.total
+            print(deductions, 'deductions')
+            print(allowances, 'allowances')
+            print(self.contract_id.wage, 'self.contract_id.wage')
+            print(no_of_payslips_left_year, 'no_of_payslips_left_year')
+            sum_of_monthly_additions = allowances / no_of_payslips_in_year
+            print(sum_of_monthly_additions, 'sum_of_monthly_additions')
+            income_received_to_date = basic_salary + allowances
+            projected_income = (self.contract_id.wage + sum_of_monthly_additions) * no_of_payslips_left_year
+            print(projected_income, 'projected_income')
+            annual_income = projected_income + income_received_to_date
+
+            deductions_paid_to_date = abs(deductions)
+            sum_of_monthly_deductions = abs(deductions) / no_of_payslips_in_year
+            projected_deductions = sum_of_monthly_deductions * no_of_payslips_left_year
+            annual_deductions = projected_deductions + deductions_paid_to_date + allowances
+            annual_taxable_income = annual_income - annual_deductions
+            annual_paye = annual_taxable_income * paye_rate
+            monthly_paye = (annual_paye - paye_paid_to_date) / no_of_payslips_left_year
 
 
         # Income Received to Date = (Sum of all Salary received to date (taken from this year's payslips)) +
@@ -107,7 +145,7 @@ class HrEmployee(models.Model):
         # Annual PAYE = Annual Taxable Income * PAYE Rate(0.25 or 0.3)
         # Monthly PAYE = (Annual PAYE - PAYE paid to date) / (Number of months left in the year)
 
-        return abs(paye_amount)
+        return round(annual_paye, 2)
 
     def get_health_surcharge_deducted(self, year):
         """The function return the health surcharge calculation"""
