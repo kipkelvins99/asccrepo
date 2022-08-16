@@ -97,13 +97,14 @@ class HrEmployee(models.Model):
                     travel_allowance += line.total
                 elif line.code != 'TA' and str(line.date_from.year) == str(year):
                     other_allowance += line.total
-                if line.salary_rule_id.id == 1 and str(line.date_from.year) == str(year):
+                if line.code == 'BASIC' and str(line.date_from.year) == str(year):
                     basic_salary += line.total
-                if line.salary_rule_id.id == 16 and str(line.date_from.year) == str(year):
+                if line.code == 'PAYE' and str(line.date_from.year) == str(year):
                     paye_paid_to_date += line.total
-                if line.category_id.id == 2 and str(line.date_from.year) == str(year):
+                print('line.category_id.code', paye_paid_to_date)
+                if line.category_id.code == 'ALW' and str(line.date_from.year) == str(year):
                     allowances += line.total
-                elif line.category_id.id == 4 and str(line.date_from.year) == str(year):
+                if line.category_id.id == 'DED' and str(line.date_from.year) == str(year):
                     deductions += line.total
 
             sum_of_monthly_additions = allowances / no_of_payslips_in_year
@@ -117,13 +118,14 @@ class HrEmployee(models.Model):
             annual_taxable_income = annual_income - annual_deductions
             annual_paye = annual_taxable_income * paye_rate
             monthly_paye = (annual_paye - paye_paid_to_date) / no_of_payslips_left_year
+            print(monthly_paye)
             gross_earning = (self.contract_id.wage * 12) + allowances
             values = {
                 'annual_paye': abs(annual_paye),
-                'allowances': allowances,
+                'allowances': round(allowances, 2),
                 'deductions': abs(deductions),
-                'travel_allowance': travel_allowance,
-                'other_allowance': other_allowance,
+                'travel_allowance': round(travel_allowance, 2),
+                'other_allowance': round(other_allowance, 2),
                 'gross_earning': round(gross_earning, 2),
 
             }
