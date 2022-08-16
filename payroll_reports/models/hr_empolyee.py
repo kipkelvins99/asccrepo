@@ -1,5 +1,4 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError, ValidationError
 
 
 class HrEmployee(models.Model):
@@ -31,31 +30,21 @@ class HrEmployee(models.Model):
         """This function returns the value for Remuneration before Deduction"""
         return round(self.contract_id.wage * 12)
 
-    def get_total_deduction(self, year):
-        """The function return the value for Total Deductions as per TD1"""
-        # deduction_year = self.deduction_year_ids.filtered(lambda d: d.year == str(year))
-        # # print(year,'year')
-        # if deduction_year:
-        #     return deduction_year.deduction_amount
-        # else:
-        return 0
-
-    def calculate_gross_earnings(self):
-        """The function return the gross earnings"""
-        # Gross Earnings = Remuneration before deduction + Commissions + Taxable allowances \
-        # + Travelling + other + Income related to previous years paid in current year + \
-        # Savings Plan withdrawals of Contributions made by company.
-
-        gross_earning = (self.contract_id.wage * 12) + 0 + 0 + 0 + 0 + 0 + 0 + 0
-
-        return round(gross_earning)
+    # def calculate_gross_earnings(self):
+    #     """The function return the gross earnings"""
+    #     # Gross Earnings = Remuneration before deduction + Commissions + Taxable allowances \
+    #     # + Travelling + other + Income related to previous years paid in current year + \
+    #     # Savings Plan withdrawals of Contributions made by company.
+    #
+    #     gross_earning = (self.contract_id.wage * 12) + 0 + 0 + 0 + 0 + 0 + 0 + 0
+    #
+    #     return round(gross_earning)
 
     def get_national_insurance_deduction(self, weeks, year):
         """The function returns the National insurance deducted"""
 
         # National Insurance deducted = Employee's weekly contribution rate x number of
         # the 52 weeks worked (Round to nearest) No cent value.
-        print(self, 'employees')
         payslip = self.env['hr.payslip'].search([('state', '!=', 'cancel'), ('employee_id', '=', self.id)])
         nis_amount = 0.0
         for line in payslip.line_ids:
@@ -64,10 +53,10 @@ class HrEmployee(models.Model):
 
         return abs(nis_amount)
 
-    def get_income_tax_deduction(self, gross_earning, total_deduction_as_per_td1, year):
+    def get_income_tax_deduction(self, year):
         """The function returns the income tax deduction"""
         # Gross Earnings - Total Deductions as per TD1 * 0.25
-
+        values = {}
         paye_amount = 0.0
         nis_amount = 0.0
         basic_salary = 0.0
@@ -89,9 +78,8 @@ class HrEmployee(models.Model):
         paye_rate =0.0
         monthly_paye = 0.0
         paye_paid_to_date = 0.0
-
+        gross_earning = 0.0
         payslip = self.env['hr.payslip'].search([('state', '!=', 'cancel'), ('employee_id', '=', self.id)])
-
 
         for pay in payslip:
             if str(pay.date_from.year) == str(year):
@@ -99,9 +87,8 @@ class HrEmployee(models.Model):
             no_of_payslips_left_year = 12 - no_of_payslips_in_year
             if (self.contract_id.wage * 12) <= 100000:
                 paye_rate = 0.25
-            else :
+            else:
                 paye_rate = 0.30
-
             for line in pay.line_ids:
 
                 if line.salary_rule_id.id == 1 and str(line.date_from.year) == str(year):
@@ -114,17 +101,11 @@ class HrEmployee(models.Model):
                     allowances += line.total
                 elif line.category_id.id == 4 and str(line.date_from.year) == str(year):
                     deductions += line.total
-            print(deductions, 'deductions')
-            print(allowances, 'allowances')
-            print(self.contract_id.wage, 'self.contract_id.wage')
-            print(no_of_payslips_left_year, 'no_of_payslips_left_year')
+
             sum_of_monthly_additions = allowances / no_of_payslips_in_year
-            print(sum_of_monthly_additions, 'sum_of_monthly_additions')
             income_received_to_date = basic_salary + allowances
             projected_income = (self.contract_id.wage + sum_of_monthly_additions) * no_of_payslips_left_year
-            print(projected_income, 'projected_income')
             annual_income = projected_income + income_received_to_date
-
             deductions_paid_to_date = abs(deductions)
             sum_of_monthly_deductions = abs(deductions) / no_of_payslips_in_year
             projected_deductions = sum_of_monthly_deductions * no_of_payslips_left_year
@@ -132,8 +113,15 @@ class HrEmployee(models.Model):
             annual_taxable_income = annual_income - annual_deductions
             annual_paye = annual_taxable_income * paye_rate
             monthly_paye = (annual_paye - paye_paid_to_date) / no_of_payslips_left_year
+            gross_earning = (self.contract_id.wage * 12) + allowances
+            values = {
+                'annual_paye': abs(annual_paye),
+                'allowances': allowances,
+                'deductions': abs(deductions),
+                'gross_earning': round(gross_earning, 2),
 
-
+            }
+        return values
         # Income Received to Date = (Sum of all Salary received to date (taken from this year's payslips)) +
         # (Sum of all additions received to date (taken from this year's payslips)
         # Projected Income = (Basic Salary + (Sum of Monthly Additions)) *Number of months left in the year
@@ -144,8 +132,6 @@ class HrEmployee(models.Model):
         # Annual Taxable Income = Annual Income - Annual Deductions
         # Annual PAYE = Annual Taxable Income * PAYE Rate(0.25 or 0.3)
         # Monthly PAYE = (Annual PAYE - PAYE paid to date) / (Number of months left in the year)
-
-        return round(annual_paye, 2)
 
     def get_health_surcharge_deducted(self, year):
         """The function return the health surcharge calculation"""

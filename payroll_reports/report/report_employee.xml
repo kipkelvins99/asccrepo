@@ -256,8 +256,8 @@
                                         <td>
                                             <div class="text-right">
                                                 <b>
-                                                    <t t-set="total_deduction_as_per_td1" t-value="o.get_total_deduction(data['year'])"/>
-                                                    <span class=""><t t-esc="total_deduction_as_per_td1"/>0</span>
+<!--                                                    <t t-set="total_deduction_as_per_td1" t-value="o.get_total_deduction(data['year'])"/>-->
+                                                    <span class=""><t t-esc="o.get_income_tax_deduction(year)['deductions']"/>0</span>
                                                 </b>
                                             </div>
                                         </td>
@@ -285,7 +285,7 @@
                                         <td>
                                             <div class="text-right">
                                                 <b>
-                                                    <span class="">0</span>
+                                                    <span class=""><t t-esc="o.get_income_tax_deduction(year)['allowances']"/>0</span>
                                                 </b>
                                             </div>
                                         </td>
@@ -406,8 +406,8 @@
                                         <td>
                                             <div class="text-right">
                                                 <b>
-                                                    <t t-set="gross_earning" t-value="o.calculate_gross_earnings()"/>
-                                                    <span class=""><t t-esc="gross_earning"/> </span>
+<!--                                                    <t t-set="gross_earning" t-value="o.calculate_gross_earnings()"/>-->
+                                                    <span class=""><t t-esc="o.get_income_tax_deduction(year)['gross_earning']"/></span>
                                                 </b>
                                             </div>
                                         </td>
@@ -442,7 +442,7 @@
                                         <td>
                                             <div class="text-right">
                                                 <b>
-                                                    <span class=""><t t-esc="o.get_income_tax_deduction(gross_earning,total_deduction_as_per_td1,year)"/></span>
+                                                    <span class=""><t t-esc="o.get_income_tax_deduction(year)['annual_paye']"/></span>
                                                 </b>
                                             </div>
                                         </td>
