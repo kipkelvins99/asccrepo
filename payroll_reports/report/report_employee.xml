@@ -242,13 +242,15 @@
                                                 <span class="content-span">
                                                     Travelling
                                                 </span>
+
                                             </div>
                                         </td>
                                         <td width="98">
                                             <div class="text-center">
                                                 <span class="content-span">
                                                     Other
-                                                </span>
+                                                </span>other_allowance
+
                                             </div>
                                         </td>
                                     </tr>
@@ -292,14 +294,14 @@
                                         <td>
                                             <div class="text-right">
                                                 <b>
-                                                    <span class="">0</span>
+                                                    <span class=""><t t-esc="o.get_income_tax_deduction(year)['travel_allowance']"/>0</span>
                                                 </b>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="text-right">
                                                 <b>
-                                                    <span class="">0</span>
+                                                    <span class=""><t t-esc="o.get_income_tax_deduction(year)['other_allowance']"/>0</span>
                                                 </b>
                                             </div>
                                         </td>

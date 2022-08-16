@@ -79,6 +79,8 @@ class HrEmployee(models.Model):
         monthly_paye = 0.0
         paye_paid_to_date = 0.0
         gross_earning = 0.0
+        travel_allowance = 0.0
+        other_allowance = 0.0
         payslip = self.env['hr.payslip'].search([('state', '!=', 'cancel'), ('employee_id', '=', self.id)])
 
         for pay in payslip:
@@ -91,12 +93,14 @@ class HrEmployee(models.Model):
                 paye_rate = 0.30
             for line in pay.line_ids:
 
+                if line.code == 'TA' and str(line.date_from.year) == str(year):
+                    travel_allowance += line.total
+                elif line.code != 'TA' and str(line.date_from.year) == str(year):
+                    other_allowance += line.total
                 if line.salary_rule_id.id == 1 and str(line.date_from.year) == str(year):
                     basic_salary += line.total
                 if line.salary_rule_id.id == 16 and str(line.date_from.year) == str(year):
-
                     paye_paid_to_date += line.total
-                print(paye_paid_to_date, 'paye_paid_to_date')
                 if line.category_id.id == 2 and str(line.date_from.year) == str(year):
                     allowances += line.total
                 elif line.category_id.id == 4 and str(line.date_from.year) == str(year):
@@ -118,6 +122,8 @@ class HrEmployee(models.Model):
                 'annual_paye': abs(annual_paye),
                 'allowances': allowances,
                 'deductions': abs(deductions),
+                'travel_allowance': travel_allowance,
+                'other_allowance': other_allowance,
                 'gross_earning': round(gross_earning, 2),
 
             }
