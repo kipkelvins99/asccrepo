@@ -48,7 +48,7 @@ class HrEmployee(models.Model):
         payslip = self.env['hr.payslip'].search([('state', '!=', 'cancel'), ('employee_id', '=', self.id)])
         nis_amount = 0.0
         for line in payslip.line_ids:
-            if line.salary_rule_id.id == 18 and str(line.date_from.year) == str(year):
+            if line.code == 'NIS' and str(line.date_from.year) == str(year):
                 nis_amount += line.total
 
         return abs(nis_amount)
@@ -82,53 +82,73 @@ class HrEmployee(models.Model):
         travel_allowance = 0.0
         other_allowance = 0.0
         payslip = self.env['hr.payslip'].search([('state', '!=', 'cancel'), ('employee_id', '=', self.id)])
+        print(payslip)
+        if payslip:
+            print('====')
+            for pay in payslip:
+                if str(pay.date_from.year) == str(year):
+                    no_of_payslips_in_year += 1
+                no_of_payslips_left_year = 12 - no_of_payslips_in_year
+                if (self.contract_id.wage * 12) <= 100000:
+                    paye_rate = 0.25
+                else:
+                    paye_rate = 0.30
+                for line in pay.line_ids:
 
-        for pay in payslip:
-            if str(pay.date_from.year) == str(year):
-                no_of_payslips_in_year += 1
-            no_of_payslips_left_year = 12 - no_of_payslips_in_year
-            if (self.contract_id.wage * 12) <= 100000:
-                paye_rate = 0.25
-            else:
-                paye_rate = 0.30
-            for line in pay.line_ids:
+                    if line.code == 'TA' and str(line.date_from.year) == str(year):
+                        travel_allowance += line.total
+                    elif line.code != 'TA' and str(line.date_from.year) == str(year):
+                        other_allowance += line.total
+                    if line.code == 'BASIC' and str(line.date_from.year) == str(year):
+                        basic_salary += line.total
+                    if line.code == 'PAYE' and str(line.date_from.year) == str(year):
+                        paye_paid_to_date += line.total
+                    print('line.category_id.code', paye_paid_to_date)
+                    if line.category_id.code == 'ALW' and str(line.date_from.year) == str(year):
+                        allowances += line.total
+                    if line.category_id.id == 'DED' and str(line.date_from.year) == str(year):
+                        deductions += line.total
+                sum_of_monthly_additions = allowances / no_of_payslips_in_year
+                income_received_to_date = basic_salary + allowances
+                projected_income = (self.contract_id.wage + sum_of_monthly_additions) * no_of_payslips_left_year
+                annual_income = projected_income + income_received_to_date
+                deductions_paid_to_date = abs(deductions)
+                sum_of_monthly_deductions = abs(deductions) / no_of_payslips_in_year
+                projected_deductions = sum_of_monthly_deductions * no_of_payslips_left_year
+                annual_deductions = projected_deductions + deductions_paid_to_date + allowances
+                annual_taxable_income = annual_income - annual_deductions
+                annual_paye = annual_taxable_income * paye_rate
+                monthly_paye = (annual_paye - paye_paid_to_date) / no_of_payslips_left_year
+                print(monthly_paye)
+                gross_earning = (self.contract_id.wage * 12) + allowances
+                print(deductions, 'llllllllllllllllllllllllll')
+        else:
+            print('----')
+            deductions = 0.0
 
-                if line.code == 'TA' and str(line.date_from.year) == str(year):
-                    travel_allowance += line.total
-                elif line.code != 'TA' and str(line.date_from.year) == str(year):
-                    other_allowance += line.total
-                if line.code == 'BASIC' and str(line.date_from.year) == str(year):
-                    basic_salary += line.total
-                if line.code == 'PAYE' and str(line.date_from.year) == str(year):
-                    paye_paid_to_date += line.total
-                print('line.category_id.code', paye_paid_to_date)
-                if line.category_id.code == 'ALW' and str(line.date_from.year) == str(year):
-                    allowances += line.total
-                if line.category_id.id == 'DED' and str(line.date_from.year) == str(year):
-                    deductions += line.total
-
-            sum_of_monthly_additions = allowances / no_of_payslips_in_year
-            income_received_to_date = basic_salary + allowances
-            projected_income = (self.contract_id.wage + sum_of_monthly_additions) * no_of_payslips_left_year
-            annual_income = projected_income + income_received_to_date
-            deductions_paid_to_date = abs(deductions)
-            sum_of_monthly_deductions = abs(deductions) / no_of_payslips_in_year
-            projected_deductions = sum_of_monthly_deductions * no_of_payslips_left_year
-            annual_deductions = projected_deductions + deductions_paid_to_date + allowances
-            annual_taxable_income = annual_income - annual_deductions
-            annual_paye = annual_taxable_income * paye_rate
-            monthly_paye = (annual_paye - paye_paid_to_date) / no_of_payslips_left_year
+            # sum_of_monthly_additions = allowances / no_of_payslips_in_year
+            # income_received_to_date = basic_salary + allowances
+            # projected_income = (self.contract_id.wage + sum_of_monthly_additions) * no_of_payslips_left_year
+            # annual_income = projected_income + income_received_to_date
+            # deductions_paid_to_date = abs(deductions)
+            # sum_of_monthly_deductions = abs(deductions) / no_of_payslips_in_year
+            # projected_deductions = sum_of_monthly_deductions * no_of_payslips_left_year
+            # annual_deductions = projected_deductions + deductions_paid_to_date + allowances
+            # annual_taxable_income = annual_income - annual_deductions
+            annual_paye = 0.0
+            # monthly_paye = (annual_paye - paye_paid_to_date) / no_of_payslips_left_year
             print(monthly_paye)
             gross_earning = (self.contract_id.wage * 12) + allowances
-            values = {
-                'annual_paye': abs(annual_paye),
-                'allowances': round(allowances, 2),
-                'deductions': abs(deductions),
-                'travel_allowance': round(travel_allowance, 2),
-                'other_allowance': round(other_allowance, 2),
-                'gross_earning': round(gross_earning, 2),
+            print(deductions,'llllllllllllllllllllllllll')
+        values = {
+            'annual_paye': abs(annual_paye),
+            'allowances': round(allowances, 2),
+            'deductions': abs(deductions),
+            'travel_allowance': round(travel_allowance, 2),
+            'other_allowance': round(other_allowance, 2),
+            'gross_earning': round(gross_earning, 2),
 
-            }
+        }
         return values
         # Income Received to Date = (Sum of all Salary received to date (taken from this year's payslips)) +
         # (Sum of all additions received to date (taken from this year's payslips)
@@ -154,6 +174,6 @@ class HrEmployee(models.Model):
         payslip = self.env['hr.payslip'].search([('state', '!=', 'cancel'), ('employee_id', '=', self.id)])
         health_amount = 0.0
         for line in payslip.line_ids:
-            if line.salary_rule_id.id == 17 and str(line.date_from.year) == str(year):
+            if line.code == 'HLSR' and str(line.date_from.year) == str(year):
                 health_amount += line.total
         return abs(health_amount)
