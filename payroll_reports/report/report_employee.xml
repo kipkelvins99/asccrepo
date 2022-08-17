@@ -259,7 +259,7 @@
                                             <div class="text-right">
                                                 <b>
 <!--                                                    <t t-set="total_deduction_as_per_td1" t-value="o.get_total_deduction(data['year'])"/>-->
-                                                    <span class=""><t t-esc="o.get_income_tax_deduction(year)['deductions']"/>0</span>
+                                                    <span class=""><t t-esc="o.get_income_tax_deduction(year)['deductions']"/></span>
                                                 </b>
                                             </div>
                                         </td>

@@ -1,4 +1,6 @@
 from odoo import api, fields, models, _
+from odoo.exceptions import UserError, ValidationError
+
 
 
 class HrEmployee(models.Model):
@@ -29,16 +31,6 @@ class HrEmployee(models.Model):
     def get_remuneration(self):
         """This function returns the value for Remuneration before Deduction"""
         return round(self.contract_id.wage * 12)
-
-    # def calculate_gross_earnings(self):
-    #     """The function return the gross earnings"""
-    #     # Gross Earnings = Remuneration before deduction + Commissions + Taxable allowances \
-    #     # + Travelling + other + Income related to previous years paid in current year + \
-    #     # Savings Plan withdrawals of Contributions made by company.
-    #
-    #     gross_earning = (self.contract_id.wage * 12) + 0 + 0 + 0 + 0 + 0 + 0 + 0
-    #
-    #     return round(gross_earning)
 
     def get_national_insurance_deduction(self, weeks, year):
         """The function returns the National insurance deducted"""
@@ -82,13 +74,17 @@ class HrEmployee(models.Model):
         travel_allowance = 0.0
         other_allowance = 0.0
         payslip = self.env['hr.payslip'].search([('state', '!=', 'cancel'), ('employee_id', '=', self.id)])
-        print(payslip)
         if payslip:
-            print('====')
             for pay in payslip:
                 if str(pay.date_from.year) == str(year):
                     no_of_payslips_in_year += 1
+                else:
+                    no_of_payslips_in_year = 1
+                    # raise UserError(_(
+                    #     "You can't create a new payment without an outstanding payments/receipts account set on the %s journal.",
+                    #     self.journal_id.display_name))
                 no_of_payslips_left_year = 12 - no_of_payslips_in_year
+
                 if (self.contract_id.wage * 12) <= 100000:
                     paye_rate = 0.25
                 else:
@@ -103,10 +99,9 @@ class HrEmployee(models.Model):
                         basic_salary += line.total
                     if line.code == 'PAYE' and str(line.date_from.year) == str(year):
                         paye_paid_to_date += line.total
-                    print('line.category_id.code', paye_paid_to_date)
                     if line.category_id.code == 'ALW' and str(line.date_from.year) == str(year):
                         allowances += line.total
-                    if line.category_id.id == 'DED' and str(line.date_from.year) == str(year):
+                    if line.category_id.code == 'DED' and str(line.date_from.year) == str(year):
                         deductions += line.total
                 sum_of_monthly_additions = allowances / no_of_payslips_in_year
                 income_received_to_date = basic_salary + allowances
@@ -119,11 +114,9 @@ class HrEmployee(models.Model):
                 annual_taxable_income = annual_income - annual_deductions
                 annual_paye = annual_taxable_income * paye_rate
                 monthly_paye = (annual_paye - paye_paid_to_date) / no_of_payslips_left_year
-                print(monthly_paye)
                 gross_earning = (self.contract_id.wage * 12) + allowances
-                print(deductions, 'llllllllllllllllllllllllll')
+
         else:
-            print('----')
             deductions = 0.0
 
             # sum_of_monthly_additions = allowances / no_of_payslips_in_year
@@ -134,12 +127,8 @@ class HrEmployee(models.Model):
             # sum_of_monthly_deductions = abs(deductions) / no_of_payslips_in_year
             # projected_deductions = sum_of_monthly_deductions * no_of_payslips_left_year
             # annual_deductions = projected_deductions + deductions_paid_to_date + allowances
-            # annual_taxable_income = annual_income - annual_deductions
             annual_paye = 0.0
-            # monthly_paye = (annual_paye - paye_paid_to_date) / no_of_payslips_left_year
-            print(monthly_paye)
             gross_earning = (self.contract_id.wage * 12) + allowances
-            print(deductions,'llllllllllllllllllllllllll')
         values = {
             'annual_paye': abs(annual_paye),
             'allowances': round(allowances, 2),

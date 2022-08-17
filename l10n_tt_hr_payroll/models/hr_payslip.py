@@ -11,11 +11,12 @@ class HrPayslip(models.Model):
     health_rate = fields.Float(string="Health", compute='_compute_health_deduction')
     paye_rate = fields.Float(string="Paye", compute='_compute_paye_deduction')
     nis_rate = fields.Float(string="NIS", compute='_compute_nis_deduction')
+    nis_rates = fields.Float(string="NISs")
 
     @api.depends('struct_id', 'date_from', 'date_to', 'employee_id', 'contract_id')
     def _compute_paye_deduction(self):
         res_config_details = self.env['ir.config_parameter'].sudo()
-        paye_personal_deduction = res_config_details.get_param('l10n_tt_hr_payroll.paye_personal_deduction')
+        personal_deduction = res_config_details.get_param('l10n_tt_hr_payroll.paye_personal_deduction')
         paye_senior_citizen_deduction = res_config_details.get_param('l10n_tt_hr_payroll.paye_senior_citizen_deduction')
         paye_mortgage_limit = res_config_details.get_param('l10n_tt_hr_payroll.paye_mortgage_limit')
         paye_tertiary_education_limit = res_config_details.get_param('l10n_tt_hr_payroll.paye_tertiary_education_limit')
@@ -36,16 +37,17 @@ class HrPayslip(models.Model):
                 # ('state', '=', 'approve')
             ], limit=1)
             basic_sal_year = get_amount.wage * 12
-            # basic_sal_week = (get_amount.wage * 12) / 52
+            # print(basic_sal_year, 'basic_sal_year')
+            print(get_amount.wage)
             # if loan_line:
-            if str(basic_sal_year) < paye_personal_deduction:
+            if basic_sal_year < float(personal_deduction):
                 data.paye_rate = 0.0
 
-            elif paye_personal_deduction < str(basic_sal_year) <= '100000':
-                data.paye_rate = get_amount.wage * (25 / 100)
+            if float(personal_deduction) < basic_sal_year <= 1000000:
+                data.paye_rate = get_amount.wage * 0.25
 
-            elif str(basic_sal_year) > '100000':
-                data.paye_rate = get_amount.wage * (30 / 100)
+            elif basic_sal_year > 1000000:
+                data.paye_rate = get_amount.wage * 0.30
 
     @api.depends('struct_id', 'date_from', 'date_to', 'employee_id', 'contract_id')
     def _compute_health_deduction(self):
@@ -56,8 +58,6 @@ class HrPayslip(models.Model):
         health_surcharge_maximum_age = res_config_details.get_param('l10n_tt_hr_payroll.health_surcharge_maximum_age')
         health_surcharge_account_number = res_config_details.get_param(
             'l10n_tt_hr_payroll.health_surcharge_account_number')
-        nis_maximum_age = res_config_details.get_param('l10n_tt_hr_payroll.nis_maximum_age')
-        nis_minimum_age = res_config_details.get_param('l10n_tt_hr_payroll.nis_minimum_age')
         for data in self:
             get_amount = self.env['hr.contract'].search([
                 ('employee_id', '=', data.employee_id.id),
@@ -92,6 +92,7 @@ class HrPayslip(models.Model):
             'l10n_tt_hr_payroll.nis_employee_gl_account_number')
         nis_employer_gl_account_number = res_config_details.get_param(
             'l10n_tt_hr_payroll.nis_employer_gl_account_number')
+        allowances = 0.0
         for data in self:
             if (not data.employee_id) or (not data.date_from) or (not data.date_to):
                 return
@@ -99,26 +100,41 @@ class HrPayslip(models.Model):
                 ('employee_id', '=', data.employee_id.id),
                 # ('state', '=', 'approve')
             ], limit=1)
-            basic_sal_week = (get_amount.wage * 12) / 52
+            # basic_sal_week = (get_amount.wage * 12) / 52
             nis_rates = self.env['nis.rates'].search([])
-
+            for rec in data.line_ids:
+                print(rec, 'reccc')
+                if rec.category_id.code == 'ALW':
+                    allowances += rec.total
+            total_income = get_amount.wage + allowances
+            print(total_income, 'total_income')
             for line in nis_rates.nis_line_ids:
                 monthly_earn = line.monthly_earnings.split()
+
                 if nis_minimum_age and nis_maximum_age:
                     if nis_minimum_age < str(data.employee_id.age) < nis_maximum_age:
-                        if monthly_earn[0] < str(get_amount.wage) < monthly_earn[2]:
+                        if float(monthly_earn[0]) <= total_income <= float(monthly_earn[2]):
                             if monthly_earn[2] != 'over':
                                 amount = line.employees_weekly_contri
-                                data.nis_rate = float(amount) * 5
-                            elif monthly_earn[2] == 'over' and str(get_amount.wage) > monthly_earn[2]:
+                                print(amount, 'kkkkkkkk')
+                                data.nis_rate = float(amount) * 4
+                            elif monthly_earn[2] == 'over' and total_income > float(monthly_earn[2]):
                                 amount = line.employees_weekly_contri
-                                data.nis_rate = float(amount) * 5
+                                data.nis_rate = float(amount) * 4
+                    print(data.nis_rate)
                 else:
                     if nis_age.nis_minimum_age < str(data.employee_id.age) < nis_age.nis_maximum_age:
-                        if monthly_earn[0] < str(get_amount.wage) < monthly_earn[2]:
+                        if float(monthly_earn[0]) < total_income < float(monthly_earn[2]):
                             if monthly_earn[2] != 'over':
                                 amount = line.employees_weekly_contri
-                                data.nis_rate = float(amount) * 5
-                            elif monthly_earn[2] == 'over' and str(get_amount.wage) > monthly_earn[2]:
+                                data.nis_rate = float(amount) * 4
+                            elif monthly_earn[2] == 'over' and total_income > float(monthly_earn[2]):
                                 amount = line.employees_weekly_contri
-                                data.nis_rate = float(amount) * 5
+                                data.nis_rate = float(amount) * 4
+                print(data.nis_rate, 'klklll')
+
+    @api.onchange('nis_rate')
+    def _onchange_nis_rate(self):
+        for rec in self:
+            rec.nis_rates = rec.nis_rate
+            print('oooooo', rec.nis_rates)

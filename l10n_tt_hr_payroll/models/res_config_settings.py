@@ -13,6 +13,7 @@ class ResConfigSettings(models.TransientModel):
     nis_show_full_salary = fields.Boolean(string='Show Full Salary')
 
     paye_personal_deduction = fields.Float(string='Personal Deduction')
+    paye_rate = fields.Float(string='PAYE Rate')
     paye_senior_citizen_deduction = fields.Float(string='Senior Citizen Deduction ')
     paye_mortgage_limit = fields.Float(string='Mortgage Limit')
     paye_tertiary_education_limit = fields.Float(string='Tertiary Education Limit')
