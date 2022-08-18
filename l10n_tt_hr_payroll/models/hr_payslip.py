@@ -2,7 +2,7 @@
 import time
 import babel
 from odoo import models, fields, api, tools, _
-from datetime import datetime
+from datetime import datetime, timedelta,date
 
 
 class HrPayslip(models.Model):
@@ -58,7 +58,14 @@ class HrPayslip(models.Model):
         health_surcharge_maximum_age = res_config_details.get_param('l10n_tt_hr_payroll.health_surcharge_maximum_age')
         health_surcharge_account_number = res_config_details.get_param(
             'l10n_tt_hr_payroll.health_surcharge_account_number')
+
+
         for data in self:
+            year_select = int(data.date_from.year)
+            next_year_date = datetime(year_select + 1, 1, 1)
+            last_day = next_year_date - timedelta(days=4)
+            total_weeks = last_day.isocalendar()[1]
+            print(total_weeks, 'total')
             get_amount = self.env['hr.contract'].search([
                 ('employee_id', '=', data.employee_id.id),
                 # ('state', '=', 'approve')
@@ -113,22 +120,23 @@ class HrPayslip(models.Model):
 
                 if nis_minimum_age and nis_maximum_age:
                     if nis_minimum_age < str(data.employee_id.age) < nis_maximum_age:
-                        if float(monthly_earn[0]) <= total_income <= float(monthly_earn[2]):
-                            if monthly_earn[2] != 'over':
+                        if monthly_earn[2] != 'over':
+                            if float(monthly_earn[0]) <= total_income <= float(monthly_earn[2]):
+                                # if monthly_earn[2] != 'over':
                                 amount = line.employees_weekly_contri
                                 print(amount, 'kkkkkkkk')
                                 data.nis_rate = float(amount) * 4
-                            elif monthly_earn[2] == 'over' and total_income > float(monthly_earn[2]):
+                            elif total_income > float(monthly_earn[2]):
                                 amount = line.employees_weekly_contri
                                 data.nis_rate = float(amount) * 4
-                    print(data.nis_rate)
+                        print(data.nis_rate)
                 else:
                     if nis_age.nis_minimum_age < str(data.employee_id.age) < nis_age.nis_maximum_age:
-                        if float(monthly_earn[0]) < total_income < float(monthly_earn[2]):
-                            if monthly_earn[2] != 'over':
+                        if str(monthly_earn[2]) != 'over':
+                            if float(monthly_earn[0]) < total_income < float(monthly_earn[2]):
                                 amount = line.employees_weekly_contri
                                 data.nis_rate = float(amount) * 4
-                            elif monthly_earn[2] == 'over' and total_income > float(monthly_earn[2]):
+                            elif total_income > float(monthly_earn[2]):
                                 amount = line.employees_weekly_contri
                                 data.nis_rate = float(amount) * 4
                 print(data.nis_rate, 'klklll')

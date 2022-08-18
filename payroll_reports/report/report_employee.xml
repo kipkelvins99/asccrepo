@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+
+<!--        <template id="template_id">-->
+<!--       <t t-call="report.html_container">-->
+<!--           <t t-set="doc" t-value="doc.with_context()" />-->
+<!--           <t t-call="report.internal_layout">-->
+<!--               <div class="page" >-->
+<!--                   <t t-call="report.external_layout">-->
+<!--                       #add the body here-->
+<!--                   </t>-->
+<!--               </div>-->
+<!--           </t>-->
+<!--       </t>-->
+<!--</template>-->
+
+
+
         <template id="report_employee">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">

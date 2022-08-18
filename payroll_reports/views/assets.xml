@@ -2,7 +2,8 @@
 <odoo>
     <template id="minimal_layout_inherit" inherit_id="web.minimal_layout">
       <xpath expr="//head" position="inside">
-             <link rel="stylesheet" href="payroll_reports/static/src/css/td4_report.css"/>
+          <link rel="stylesheet" href="payroll_reports/static/src/css/td4_report.css"/>
+<!--          <script type="text/javascript" src="/payroll_reports/static/js/action_manager.js"/>-->
       </xpath>
 </template>
 </odoo>

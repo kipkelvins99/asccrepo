@@ -19,7 +19,13 @@
             'views/assets.xml',
             'views/hr_employee_view.xml',
             'views/res_company_view.xml',
+            'wizard/td4_edit_view.xml'
+
              ],
+    # 'qweb': [
+    #             'static/xml/td4_edit_view_template.xml'
+    #
+    #     ],
     "demo": [],
     "images": [],
     "application": True,

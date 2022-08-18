@@ -1,6 +1,7 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
-
+import calendar
+from datetime import datetime
 
 
 class HrEmployee(models.Model):
@@ -26,7 +27,7 @@ class HrEmployee(models.Model):
         """This function is used for to get the report file name"""
 
         self.ensure_one()
-        return 'TD4 Report-%s' % (self.name)
+        return self.name
 
     def get_remuneration(self):
         """This function returns the value for Remuneration before Deduction"""
@@ -73,16 +74,18 @@ class HrEmployee(models.Model):
         gross_earning = 0.0
         travel_allowance = 0.0
         other_allowance = 0.0
+        total_mondays = 0.0
         payslip = self.env['hr.payslip'].search([('state', '!=', 'cancel'), ('employee_id', '=', self.id)])
         if payslip:
             for pay in payslip:
+                total_mondays = len([1 for i in calendar.monthcalendar(pay.date_from.year,
+                                                                       pay.date_from.month) if i[0] != 0])
+                print("Total Mondays in the Month: ", total_mondays)
                 if str(pay.date_from.year) == str(year):
                     no_of_payslips_in_year += 1
                 else:
                     no_of_payslips_in_year = 1
-                    # raise UserError(_(
-                    #     "You can't create a new payment without an outstanding payments/receipts account set on the %s journal.",
-                    #     self.journal_id.display_name))
+
                 no_of_payslips_left_year = 12 - no_of_payslips_in_year
 
                 if (self.contract_id.wage * 12) <= 100000:
@@ -130,7 +133,7 @@ class HrEmployee(models.Model):
             annual_paye = 0.0
             gross_earning = (self.contract_id.wage * 12) + allowances
         values = {
-            'annual_paye': abs(annual_paye),
+            'annual_paye': round(abs(annual_paye), 2),
             'allowances': round(allowances, 2),
             'deductions': abs(deductions),
             'travel_allowance': round(travel_allowance, 2),

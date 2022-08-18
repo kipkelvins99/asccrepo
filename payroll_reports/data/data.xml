@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+<!--        <menuitem id="menu_action_account_report_invoice_list" name="Invoice List"-->
+<!--                  action="action_account_report_invoice_list" parent="account_budget_reports_menu"-->
+<!--                  groups="account.group_account_readonly"/>-->
+
+        <record id="action_account_report_comprehensive_list" model="ir.actions.client">
+            <field name="name">Comprehensive Report</field>
+            <field name="tag">cmp_list</field>
+            <field name="target">current</field>
+        </record>
+
+    </data>
+</odoo>
