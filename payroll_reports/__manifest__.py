@@ -9,7 +9,7 @@
     "license": "OPL-1",
     "website": "pingtt.com",
     "description": """Payroll Reports""",
-    "depends": ['hr_payroll', 'hr'],
+    "depends": ['hr_payroll', 'hr', 'l10n_tt_hr_payroll'],
     "data": [
             'security/ir.model.access.csv',
             'wizard/td4_report_wizard_view.xml',

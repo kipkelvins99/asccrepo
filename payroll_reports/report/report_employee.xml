@@ -64,7 +64,8 @@
                                                     </span>
                                                     <div class="mt-3">
                                                         <h4>
-                                                            <span><b><t t-esc="data['year']"/></b></span>
+                                                            <t t-esc="o"/>
+<!--                                                            <span><b><t t-esc="data['year']"/></b></span>-->
                                                         </h4>
                                                     </div>
                                                 </div>
@@ -75,7 +76,7 @@
                                         <td rowspan="11" style="vertical-align: middle;max-width:50px">
                                             <div class="vertical-text"
                                                  style="-ms-transform: rotate(-90deg); /* IE 9 */ transform: rotate(-90deg);-webkit-transform: rotate(-90deg);white-space: nowrap;">
-                                                <b>TD4-<t t-esc="data['year']"/></b>
+<!--                                                <b>TD4-<t t-esc="data['year']"/></b>-->
                                             </div>
                                         </td>
                                         <td colspan="3" width="33%">
@@ -105,7 +106,7 @@
                                             <div>
                                                 <span class="content-span ">
                                                     <div name="company_address" class="mt-3">
-                                                        <span class="company_address" t-field="o.company_id.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
+<!--                                                        <span class="company_address" t-field="o.company_id.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>-->
                                                     </div>
                                                 </span>
                                             </div>
@@ -282,7 +283,7 @@
                                         <td>
                                             <div class="text-right">
                                                 <b>
-                                                    <span class=""><t t-esc="data['total_weeks']"/> </span>
+<!--                                                    <span class=""><t t-esc="data['total_weeks']"/> </span>-->
                                                 </b>
                                             </div>
                                         </td>
@@ -483,7 +484,7 @@
                                     <tr>
                                         <td colspan="2">
                                             <div class="text-center" style="padding-top: 5px;">
-                                                    <span style="padding: 5px; outline: 1px solid #000"><t t-esc="data['total_weeks']"/> </span>
+<!--                                                    <span style="padding: 5px; outline: 1px solid #000"><t t-esc="data['total_weeks']"/> </span>-->
                                                 </div>
                                             <div class="text-center mt-2">
                                                     <span class="content-span">
@@ -528,7 +529,7 @@
                                         <td colspan="2">
                                             <div class="text-center" style="padding-top: 5px;">
                                                     <span style="padding: 5px; outline: 1px solid #000">
-                                                        <t t-esc="o.get_health_surcharge_deducted((data['year']))"/>
+<!--                                                        <t t-esc="o.get_health_surcharge_deducted((data['year']))"/>-->
                                                     </span>
                                                 </div>
                                             <div class="text-center mt-2">

@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from odoo.exceptions import UserError, ValidationError
 
 
-class td4EditWizard(models.Model):
+class td4EditWizard(models.TransientModel):
     _name = 'td4.edit'
     _description = 'TD4 Report'
     _rec_name = 'employee_name'
@@ -39,24 +39,24 @@ class td4EditWizard(models.Model):
     health_deductions = fields.Float(string='Health Surcharge Deducted')
     # year = fields.Selection([(str(y), str(y)) for y in range(1990, datetime.now().year+1)], 'Year', required=True)
 
-    def print_report(self):
-        last_week = date(self, 12, 28)
-        print('p000000000000')
-        total_weeks = last_week.isocalendar()[1]
-        wizard = self.env['td4.report.wizard'].search([], limit=1)
-        print(wizard.employee_ids.id, 'yearrrr')
-        # employee_ids = self
-        data = {'year': wizard.year, 'total_weeks': total_weeks}
-        return self.env.ref('payroll_reports.employee_td4_report').report_action(wizard.employee_ids.id, data=data)
-
-    def print_report_tree(self):
-        # last_week = date(self, 12, 28)
-        print('22222222222222222',self)
-        for rec in self:
-            last_week = date(rec, 12, 28)
-            total_weeks = last_week.isocalendar()[1]
-            wizard = rec.env['td4.report.wizard'].search([], limit=1)
-            print(wizard.employee_ids.id, 'yearrrr')
-            # employee_ids = self
-            data = {'year': wizard.year, 'total_weeks': total_weeks}
-            return rec.env.ref('payroll_reports.employee_td4_report').report_action(wizard.employee_ids.id, data=data)
+    # def print_report(self):
+    #     last_week = date(self, 12, 28)
+    #     print('p000000000000')
+    #     total_weeks = last_week.isocalendar()[1]
+    #     wizard = self.env['td4.report.wizard'].search([], limit=1)
+    #     print(wizard.employee_ids.id, 'yearrrr')
+    #     # employee_ids = self
+    #     data = {'year': wizard.year, 'total_weeks': total_weeks}
+    #     return self.env.ref('payroll_reports.employee_td4_report').report_action(wizard.employee_ids.id, data=data)
+    #
+    # def print_report_tree(self):
+    #     # last_week = date(self, 12, 28)
+    #     print('22222222222222222',self)
+    #     for rec in self:
+    #         last_week = date(rec, 12, 28)
+    #         total_weeks = last_week.isocalendar()[1]
+    #         wizard = rec.env['td4.report.wizard'].search([], limit=1)
+    #         print(wizard.employee_ids.id, 'yearrrr')
+    #         # employee_ids = self
+    #         data = {'year': wizard.year, 'total_weeks': total_weeks}
+    #         return rec.env.ref('payroll_reports.employee_td4_report').report_action(wizard.employee_ids.id, data=data)
