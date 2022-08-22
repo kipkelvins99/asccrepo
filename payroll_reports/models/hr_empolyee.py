@@ -27,7 +27,7 @@ class HrEmployee(models.Model):
         """This function is used for to get the report file name"""
 
         self.ensure_one()
-        return self.name
+        return 'TD4 Report-%s' % (self.name)
 
     def get_remuneration(self):
         """This function returns the value for Remuneration before Deduction"""

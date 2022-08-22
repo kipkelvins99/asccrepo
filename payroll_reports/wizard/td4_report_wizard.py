@@ -1,8 +1,6 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-from datetime import datetime, timedelta,date
-from dateutil.relativedelta import relativedelta
-from odoo.exceptions import UserError, ValidationError
+from datetime import datetime, timedelta
 
 
 class td4ReportWizard(models.TransientModel):
@@ -13,10 +11,6 @@ class td4ReportWizard(models.TransientModel):
     year = fields.Selection([(str(y), str(y)) for y in range(1990, datetime.now().year+1)], 'Year', required=True)
 
     def preview_report(self):
-        # last_week = date(self, 12, 28)
-        # print(last_week, 'lasttttt')
-        # total_weeks = last_week.isocalendar()[1]
-        # print(total_weeks, '/////////////////')
         year_select = int(self.year)
         next_year_date = datetime(year_select + 1, 1, 1)
         last_day = next_year_date - timedelta(days=4)
@@ -25,14 +19,15 @@ class td4ReportWizard(models.TransientModel):
         lst = []
         for rec in self.employee_ids:
             report = self.env['hr.employee'].search([('id', '=', rec.id)])
-            print(report.address_id.street, '000000')
             name = report._get_report_base_filename()
             employee_address = report.address_home_id.street
             employer_address = report.address_id.street
             remuneration_before = report.contract_id.wage * 12
             obj = self.env['td4.edit'].create(
                 {
-                    'employee_name': name,
+                    'year': self.year,
+                    'name': name,
+                    'employee_name': report.name,
                     'employee_address': employee_address,
                     'employer_name': report.company_id.partner_id.name,
                     'employer_address': employer_address,
@@ -68,7 +63,6 @@ class td4ReportWizard(models.TransientModel):
             'view_mode': 'tree,form',
             'res_model': 'td4.edit',
             'domain': [('id', 'in', lst)],
-            # 'view_id': self.env.ref('module.view_id').id,
             'target': 'current'
 
         }

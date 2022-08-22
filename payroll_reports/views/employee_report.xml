@@ -14,7 +14,7 @@
         </record>
         <record id="employee_td4_report" model="ir.actions.report">
             <field name="name">TD4 Report</field>
-            <field name="model">hr.employee</field>
+            <field name="model">td4.edit</field>
             <field name="report_type">qweb-pdf</field>
             <field name="report_name">payroll_reports.report_employee</field>
             <field name="report_file">payroll_reports.report_employee</field>

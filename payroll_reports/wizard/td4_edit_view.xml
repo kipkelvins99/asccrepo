@@ -5,9 +5,6 @@
         <field name="model">td4.edit</field>
         <field name="arch" type="xml">
             <tree string="Channel" >
-<!--                <header>-->
-<!--                    <button name="print_report_tree" string="Print" class="oe_highlight" type="object"/>-->
-<!--                </header>-->
                 <field name="employee_name"/>
                 <field name="employee_bir_number"/>
                 <field name="employee_nis_number"/>
@@ -23,12 +20,6 @@
         <field name="arch" type="xml">
             <form>
                 <group>
-                    <!--                        <label for="date_start" string="Period"/>-->
-                    <!--                        <div>-->
-                    <!--                            From<field name="date_start" class="oe_inline col-sm-5"/>-->
-                    <!--                            to<field name="date_end" class="oe_inline col-sm-5"/>-->
-                    <!--                        </div>-->
-                    <!--                    </group>-->
                     <group>
 
                         <field name="employee_name"/>
@@ -75,10 +66,6 @@
                         <field name="health_deductions"/>
                     </group>
                 </group>
-<!--                <footer>-->
-<!--                    <button string="Print" name="print_report" type="object" class="oe_highlight"/>-->
-<!--                    <button string="Cancel" class="btn btn-secondary" special="cancel"/>-->
-<!--                </footer>-->
             </form>
         </field>
     </record>

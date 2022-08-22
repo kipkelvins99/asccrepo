@@ -8,8 +8,9 @@ from odoo.exceptions import UserError, ValidationError
 class td4EditWizard(models.TransientModel):
     _name = 'td4.edit'
     _description = 'TD4 Report'
-    _rec_name = 'employee_name'
 
+    year = fields.Char(string='year')
+    name = fields.Char(string='Name')
     employee_name = fields.Char(string='Employee Name')
     employee_address = fields.Char(string='Employee Address')
     employer_name = fields.Char(string='Employer Name')
@@ -37,26 +38,3 @@ class td4EditWizard(models.TransientModel):
     no_of_weeks_at_8_25 = fields.Float(string='Number of Weeks at $8.25')
     no_of_weeks_at_4_80 = fields.Float(string='Number of Weeks at $4.80')
     health_deductions = fields.Float(string='Health Surcharge Deducted')
-    # year = fields.Selection([(str(y), str(y)) for y in range(1990, datetime.now().year+1)], 'Year', required=True)
-
-    # def print_report(self):
-    #     last_week = date(self, 12, 28)
-    #     print('p000000000000')
-    #     total_weeks = last_week.isocalendar()[1]
-    #     wizard = self.env['td4.report.wizard'].search([], limit=1)
-    #     print(wizard.employee_ids.id, 'yearrrr')
-    #     # employee_ids = self
-    #     data = {'year': wizard.year, 'total_weeks': total_weeks}
-    #     return self.env.ref('payroll_reports.employee_td4_report').report_action(wizard.employee_ids.id, data=data)
-    #
-    # def print_report_tree(self):
-    #     # last_week = date(self, 12, 28)
-    #     print('22222222222222222',self)
-    #     for rec in self:
-    #         last_week = date(rec, 12, 28)
-    #         total_weeks = last_week.isocalendar()[1]
-    #         wizard = rec.env['td4.report.wizard'].search([], limit=1)
-    #         print(wizard.employee_ids.id, 'yearrrr')
-    #         # employee_ids = self
-    #         data = {'year': wizard.year, 'total_weeks': total_weeks}
-    #         return rec.env.ref('payroll_reports.employee_td4_report').report_action(wizard.employee_ids.id, data=data)

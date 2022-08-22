@@ -64,8 +64,7 @@
                                                     </span>
                                                     <div class="mt-3">
                                                         <h4>
-                                                            <t t-esc="o"/>
-<!--                                                            <span><b><t t-esc="data['year']"/></b></span>-->
+                                                            <span><b><t t-esc="o.year"/></b></span>
                                                         </h4>
                                                     </div>
                                                 </div>
@@ -76,7 +75,7 @@
                                         <td rowspan="11" style="vertical-align: middle;max-width:50px">
                                             <div class="vertical-text"
                                                  style="-ms-transform: rotate(-90deg); /* IE 9 */ transform: rotate(-90deg);-webkit-transform: rotate(-90deg);white-space: nowrap;">
-<!--                                                <b>TD4-<t t-esc="data['year']"/></b>-->
+                                                <b>TD4-<t t-esc="o.year"/></b>
                                             </div>
                                         </td>
                                         <td colspan="3" width="33%">
@@ -86,12 +85,15 @@
                                                 </span>
                                             </div>
                                             <div class="employee_name">
-                                                <span class="content-span"><t t-esc="o.name"/> </span>
+                                                <span class="content-span"><t t-esc="o.employee_name"/> </span>
+                                                <span class="content-span"><t t-esc="o.employee_address"/> </span>
                                             </div>
                                             <div class="employee_address">
                                                 <span class="content-span">
                                                     <div name="employee_address" class="">
-                                                        <span class="employee_address" t-field="o.address_home_id" t-options='{"widget": "contact", "fields": ["address"], "no_marker": true}'/>
+<!--                                                        <span class="employee_address" t-field="o.employee_address" t-options='{"widget": "contact", "fields": ["address"], "no_marker": true}'/>-->
+                                                        <span class="content-span"><t t-esc="o.employee_address"/> </span>
+
                                                     </div>
                                                 </span>
                                             </div>
@@ -106,6 +108,8 @@
                                             <div>
                                                 <span class="content-span ">
                                                     <div name="company_address" class="mt-3">
+                                                            <span class="content-span"><t t-esc="o.employer_name"/> </span>
+                                                            <span class="content-span"><t t-esc="o.employer_address"/> </span>
 <!--                                                        <span class="company_address" t-field="o.company_id.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>-->
                                                     </div>
                                                 </span>
@@ -151,28 +155,28 @@
                                         <td>
                                             <div class="text-center">
                                                 <b>
-                                                    <span class=""><t t-esc="o.bir_file_number"/></span>
+                                                    <span class=""><t t-esc="o.employee_bir_number"/></span>
                                                 </b>
                                             </div>
                                         </td>
                                         <td colspan="2">
                                             <div class="text-center">
                                                 <b>
-                                                    <span class=""><t t-esc="o.nis_number"/></span>
+                                                    <span class=""><t t-esc="o.employee_nis_number"/></span>
                                                 </b>
                                             </div>
                                         </td>
                                         <td colspan="2">
                                             <div class="text-center">
                                                 <b>
-                                                    <span class=""><t t-esc="o.company_id.paye_file_number"/></span>
+                                                    <span class=""><t t-esc="o.employer_paye_number"/></span>
                                                 </b>
                                             </div>
                                         </td>
                                         <td colspan="3">
                                             <div class="text-center">
                                                 <b>
-                                                    <span class=""><t t-esc="o.company_id.bir_file_number"/></span>
+                                                    <span class=""><t t-esc="o.employer_bir_number"/></span>
                                                 </b>
                                             </div>
                                         </td>
@@ -276,21 +280,21 @@
                                             <div class="text-right">
                                                 <b>
 <!--                                                    <t t-set="total_deduction_as_per_td1" t-value="o.get_total_deduction(data['year'])"/>-->
-                                                    <span class=""><t t-esc="o.get_income_tax_deduction(year)['deductions']"/></span>
+                                                    <span class=""><t t-esc="o.total_deductions"/></span>
                                                 </b>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="text-right">
                                                 <b>
-<!--                                                    <span class=""><t t-esc="data['total_weeks']"/> </span>-->
+                                                    <span class=""><t t-esc="o.week_employed"/> </span>
                                                 </b>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="text-right">
                                                 <b>
-                                                    <span class=""><t t-esc="o.get_remuneration()"/> </span>
+                                                    <span class=""><t t-esc="o.remuneration_before"/> </span>
                                                 </b>
                                             </div>
                                         </td>
@@ -304,21 +308,21 @@
                                         <td>
                                             <div class="text-right">
                                                 <b>
-                                                    <span class=""><t t-esc="o.get_income_tax_deduction(year)['allowances']"/>0</span>
+                                                    <span class=""><t t-esc="o.taxable_allowance"/>0</span>
                                                 </b>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="text-right">
                                                 <b>
-                                                    <span class=""><t t-esc="o.get_income_tax_deduction(year)['travel_allowance']"/>0</span>
+                                                    <span class=""><t t-esc="o.travel_allowance"/>0</span>
                                                 </b>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="text-right">
                                                 <b>
-                                                    <span class=""><t t-esc="o.get_income_tax_deduction(year)['other_allowance']"/>0</span>
+                                                    <span class=""><t t-esc="o.other_allowance"/>0</span>
                                                 </b>
                                             </div>
                                         </td>
@@ -426,7 +430,7 @@
                                             <div class="text-right">
                                                 <b>
 <!--                                                    <t t-set="gross_earning" t-value="o.calculate_gross_earnings()"/>-->
-                                                    <span class=""><t t-esc="o.get_income_tax_deduction(year)['gross_earning']"/></span>
+                                                    <span class=""><t t-esc="o.gross_earnings"/></span>
                                                 </b>
                                             </div>
                                         </td>
@@ -454,14 +458,14 @@
                                         <td colspan="2">
                                             <div class="text-right">
                                                 <b>
-                                                    <span class=""><t t-esc="o.get_national_insurance_deduction(weeks,year)"/> </span>
+                                                    <span class=""><t t-esc="o.nis_deduction"/> </span>
                                                 </b>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="text-right">
                                                 <b>
-                                                    <span class=""><t t-esc="o.get_income_tax_deduction(year)['annual_paye']"/></span>
+                                                    <span class=""><t t-esc="o.paye_deduction"/></span>
                                                 </b>
                                             </div>
                                         </td>
@@ -484,7 +488,7 @@
                                     <tr>
                                         <td colspan="2">
                                             <div class="text-center" style="padding-top: 5px;">
-<!--                                                    <span style="padding: 5px; outline: 1px solid #000"><t t-esc="data['total_weeks']"/> </span>-->
+                                                    <span style="padding: 5px; outline: 1px solid #000"><t t-esc="o.no_of_weeks_health"/> </span>
                                                 </div>
                                             <div class="text-center mt-2">
                                                     <span class="content-span">
@@ -496,7 +500,7 @@
                                             <div class="text-center" style="padding-top: 5px;">
                                                     <span style="padding: 5px; outline: 1px solid #000">
 <!--                                                        <t t-if="o.number_of_weeks_at_8_25">-->
-                                                            <t t-esc="round(o.number_of_weeks_at_8_25)"/>
+                                                            <t t-esc="round(o.no_of_weeks_health)"/>
 <!--                                                        </t>-->
 <!--                                                        <t t-else="">0</t>-->
                                                     </span>
@@ -512,7 +516,7 @@
                                             <div class="text-center" style="padding-top: 5px;">
                                                     <span style="padding: 5px; outline: 1px solid #000">
 <!--                                                        <t t-if="o.number_of_weeks_at_4_80">-->
-                                                            <t t-esc="round(o.number_of_weeks_at_4_80)"/>
+                                                            <t t-esc="round(o.no_of_weeks_at_4_80)"/>
 <!--                                                        </t>-->
 <!--                                                        <t t-else="">-->
 <!--                                                            0-->
@@ -529,7 +533,7 @@
                                         <td colspan="2">
                                             <div class="text-center" style="padding-top: 5px;">
                                                     <span style="padding: 5px; outline: 1px solid #000">
-<!--                                                        <t t-esc="o.get_health_surcharge_deducted((data['year']))"/>-->
+                                                        <t t-esc="o.health_deductions"/>
                                                     </span>
                                                 </div>
                                             <div class="text-center mt-2">
