@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="summary_report">
+            <t t-call="web.html_container">
+<!--                <t t-foreach="docs" t-as="o">-->
+                    <t t-call="web.basic_layout">
+                        <div>
+<!--                            <span>ooooooooooooooooo</span>-->
+<!--                            <span>ppppppppp</span>-->
+<!--                            <span>lllllllll</span>-->
+<!--                            <span>iiiiiiiiiiii</span>-->
+<!--                            <span>poooooooo</span>-->
+<!--                            <span>mmmmmmmmmmmmmm</span>-->
+                        </div>
+
+                    </t>
+                </t>
+<!--            </t>-->
+        </template>
+    </data>
+</odoo>

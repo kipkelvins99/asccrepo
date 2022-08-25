@@ -20,6 +20,7 @@
                         </group>
                     <footer>
                         <button string="Preview" name="preview_report" type="object" class="oe_highlight"/>
+                        <button string="Summary Report" name="report_summary" type="object" class="oe_highlight"/>
                         <button string="Cancel" class="btn btn-secondary" special="cancel"/>
                     </footer>
                 </form>
