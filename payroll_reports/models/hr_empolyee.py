@@ -1,5 +1,4 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError, ValidationError
 import calendar
 from datetime import datetime
 
@@ -12,16 +11,6 @@ class HrEmployee(models.Model):
     nis_number = fields.Char('NIS Number')
     number_of_weeks_at_8_25 = fields.Float('Number of weeks at $8.25')
     number_of_weeks_at_4_80 = fields.Float('Number of weeks at $4.80')
-
-    # def write(self, vals):
-    #     res = super(HrEmployee, self).write(vals)
-    #     if vals.get('number_of_weeks_at_8_25') and self.number_of_weeks_at_4_80:
-    #         raise ValidationError("You can not select Number of weeks at $8.25 and Number of weeks at $4.80 at once.")
-    #
-    #     if vals.get('number_of_weeks_at_4_80') and self.number_of_weeks_at_8_25:
-    #         raise ValidationError("You can not select Number of weeks at $8.25 and Number of weeks at $4.80 at once.")
-    #
-    #     return res
 
     def _get_report_base_filename(self):
         """This function is used for to get the report file name"""
@@ -121,15 +110,6 @@ class HrEmployee(models.Model):
 
         else:
             deductions = 0.0
-
-            # sum_of_monthly_additions = allowances / no_of_payslips_in_year
-            # income_received_to_date = basic_salary + allowances
-            # projected_income = (self.contract_id.wage + sum_of_monthly_additions) * no_of_payslips_left_year
-            # annual_income = projected_income + income_received_to_date
-            # deductions_paid_to_date = abs(deductions)
-            # sum_of_monthly_deductions = abs(deductions) / no_of_payslips_in_year
-            # projected_deductions = sum_of_monthly_deductions * no_of_payslips_left_year
-            # annual_deductions = projected_deductions + deductions_paid_to_date + allowances
             annual_paye = 0.0
             gross_earning = (self.contract_id.wage * 12) + allowances
         values = {
@@ -142,30 +122,57 @@ class HrEmployee(models.Model):
 
         }
         return values
-        # Income Received to Date = (Sum of all Salary received to date (taken from this year's payslips)) +
-        # (Sum of all additions received to date (taken from this year's payslips)
-        # Projected Income = (Basic Salary + (Sum of Monthly Additions)) *Number of months left in the year
-        # Annual Income = Projected Income + Income Received to Date
-        # Deductions paid to Date = (Sum of all Deductions (taken from this year's payslips. This includes 70% of NIS))
-        # Projected Deductions = (Sum of Monthly Deductions (This includes 70 % of NIS)) *Number of months left in the year
-        # Annual Deductions = Projected Deductions + Deductions paid to Date + Personal Allowance
-        # Annual Taxable Income = Annual Income - Annual Deductions
-        # Annual PAYE = Annual Taxable Income * PAYE Rate(0.25 or 0.3)
-        # Monthly PAYE = (Annual PAYE - PAYE paid to date) / (Number of months left in the year)
 
     def get_health_surcharge_deducted(self, year):
         """The function return the health surcharge calculation"""
-        # Number of weeks at $8.25 or Number of weeks at $4.80
-        # if self.number_of_weeks_at_8_25:
-        #     return round(int(weeks) * 8.25)
-        # elif self.number_of_weeks_at_4_80:
-        #     return round(int(weeks) * 4.80)
-        # else:
-        #     return 0
-
         payslip = self.env['hr.payslip'].search([('state', '!=', 'cancel'), ('employee_id', '=', self.id)])
         health_amount = 0.0
         for line in payslip.line_ids:
             if line.code == 'HLSR' and str(line.date_from.year) == str(year):
                 health_amount += line.total
         return abs(health_amount)
+    #
+    # def summary_report_data(self, year):
+    #     print('repo')
+    #     total_remuneration = 0.0
+    #     total_commissions = 0.0
+    #     taxable_travel = 0.0
+    #     previous_year_income = 0.0
+    #     other_taxable_allowances = 0.0
+    #     total_benefits = 0.0
+    #     total_gross_earnings = 0.0
+    #     non_taxable_travel = 0.0
+    #     other_non_taxable_allowances = 0.0
+    #     other_before_deductions = 0.0
+    #     total_before_tax_pension = 0.0
+    #     total_after_tax_pension = 0.0
+    #     total_nis = 0.0
+    #     total_health_surcharge = 0.0
+    #     total_paye = 0.0
+    #     employer_contributions = 0.0
+    #     no_of_employees = 0.0
+    #     no_of_non_paye_employees = 0.0
+    #     no_of_paye_employees = 0.0
+    #     no_of_non_hsur_employees = 0.0
+    #     no_of_hsur_employees = 0.0
+    #     no_of_non_nis_employees = 0.0
+    #     no_of_nis_employees = 0.0
+    #     gross_of_non_taxable_employees = 0.0
+    #     employees = self.env['hr.employee'].search([])
+    #     for employee in employees:
+    #         payslip = self.env['hr.payslip'].search([('state', '!=', 'cancel'), ('employee_id', '=', employee.id)])
+    #         if payslip:
+    #             print('total_remuneration', total_remuneration)
+    #             total_remuneration += employee.contract_id.wage * 12
+    #             print('total_remuneration', total_remuneration)
+    #
+    #             values = {
+    #                 'total_remuneration': round(total_remuneration, 2),
+    #                 # 'allowances': round(allowances, 2),
+    #                 # 'deductions': abs(deductions),
+    #                 # 'travel_allowance': round(travel_allowance, 2),
+    #                 # 'other_allowance': round(other_allowance, 2),
+    #                 # 'gross_earning': round(gross_earning, 2),
+    #
+    #             }
+    #             return values
