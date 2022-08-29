@@ -1,4 +1,4 @@
-from odoo import api, fields, models, _
+from odoo import models, _
 
 
 class SummaryReport(models.AbstractModel):
@@ -6,20 +6,18 @@ class SummaryReport(models.AbstractModel):
 
     # @api.model
     def _get_report_values(self, docids, data):
-        # docs = self.env['hr.employee'].browse(data['context']['active_ids'])
         docs = self.env['hr.employee'].search([])
-        # print(self.env['hr.employee'].browse(data['year']), 'docs')
+        print(type(data['employee_ids']), 'docs')
         return {
             'doc_ids': docids,
             'doc_model': 'hr.employee',
-            # 'docs': docs,
             'data': data,
-            'summary_report_data': self.summary_report_data('year'),
+            # 'employee_ids': employee_ids,
+            'summary_report_data': self.summary_report_data(data),
         }
 
-    def summary_report_data(self, year):
-        # year = self.env['td4.report.wizard'].search([], limit=1).mapped('year')
-        # print(self.env['hr.employee'].browse(data['year']), 'iiiiiiiiiiiiiiii')
+    def summary_report_data(self, data):
+        print(data['employee_ids'],'ppppppppp', type(data['year']) , 'kkkkkkkkkkkkkkk')
         total_remuneration = 0.0
         total_commissions = 0.0
         taxable_travel = 0.0
@@ -46,7 +44,6 @@ class SummaryReport(models.AbstractModel):
         gross_of_non_taxable_employees = 0.0
         employees = self.env['hr.employee'].search([])
         no_of_employees = self.env['hr.employee'].search_count([])
-        year = self.env['td4.report.wizard'].search([]).mapped('year')
         company = self.env.company
         res_config_details = self.env['ir.config_parameter'].sudo()
         personal_deduction = res_config_details.get_param('l10n_tt_hr_payroll.paye_personal_deduction')
@@ -54,74 +51,139 @@ class SummaryReport(models.AbstractModel):
         health_surcharge_maximum_age = res_config_details.get_param('l10n_tt_hr_payroll.health_surcharge_maximum_age')
         nis_maximum_age = res_config_details.get_param('l10n_tt_hr_payroll.nis_maximum_age')
         nis_minimum_age = res_config_details.get_param('l10n_tt_hr_payroll.nis_minimum_age')
+        employee = self.env['hr.employee'].search([('id', 'in', data['employee_ids'])])
+        if employee:
+            for rec in employee:
+                emp_annual_salary = rec.contract_id.wage * 12
+                if emp_annual_salary < float(personal_deduction):
+                    no_of_non_paye_employees += 1
 
-        for employee in employees:
-            emp_annual_salary = employee.contract_id.wage*12
-            if emp_annual_salary < float(personal_deduction):
-                no_of_non_paye_employees += 1
+                else:
+                    no_of_paye_employees += 1
+                if health_surcharge_minimum_age < str(rec.age) < health_surcharge_maximum_age:
+                    no_of_non_hsur_employees += 1
+                else:
+                    no_of_hsur_employees += 1
+                if nis_minimum_age < str(rec.age) < nis_maximum_age:
+                    no_of_non_nis_employees += 1
+                else:
+                    no_of_nis_employees += 1
+                payslip = self.env['hr.payslip'].search([('state', '!=', 'cancel'), ('employee_id', '=', rec.id)])
+                if payslip:
+                    total_remuneration += rec.contract_id.wage * 12
+                    for line in payslip.line_ids:
 
-            else:
-                no_of_paye_employees += 1
-            if health_surcharge_minimum_age < str(employee.age) < health_surcharge_maximum_age:
-                print(employee)
-                no_of_non_hsur_employees += 1
-            else:
-                no_of_hsur_employees += 1
-            if nis_minimum_age < str(employee.age) < nis_maximum_age:
-                no_of_non_nis_employees += 1
-            else:
-                no_of_nis_employees += 1
-            payslip = self.env['hr.payslip'].search([('state', '!=', 'cancel'), ('employee_id', '=', employee.id)])
-            if payslip:
-                total_remuneration += employee.contract_id.wage * 12
-                for line in payslip.line_ids:
+                        if line.code == 'TA' and str(line.date_from.year) == (data['year']):
+                            taxable_travel += line.total
+                        elif line.code != 'TA':
+                            other_taxable_allowances += line.total
+                        # if line.code == 'BASIC' and str(line.date_from.year) == str(year):
+                        #     basic_salary += line.total
+                        if line.code == 'PAYE' and str(line.date_from.year) == (data['year']):
+                            total_paye += line.total
+                        if line.code == 'HSLR' and str(line.date_from.year) == (data['year']):
+                            total_health_surcharge += line.total
+                        if line.code == 'NIS' and str(line.date_from.year) == (data['year']):
+                            total_nis += line.total
+                        if line.category_id.code == 'ALW' and str(line.date_from.year) == (data['year']):
+                            allowances += line.total
+                        # if line.category_id.code == 'DED' and str(line.date_from.year) == str(year):
+                        #     deductions += line.total
+                    total_gross_earnings += (rec.contract_id.wage * 12) + allowances
 
-                    if line.code == 'TA':
-                        taxable_travel += line.total
-                    elif line.code != 'TA':
-                        other_taxable_allowances += line.total
-                    # if line.code == 'BASIC' and str(line.date_from.year) == str(year):
-                    #     basic_salary += line.total
-                    if line.code == 'PAYE':
-                        total_paye += line.total
-                    # print(no_of_paye_employees, 'payeee')
-                    if line.code == 'HSLR':
-                        total_health_surcharge += line.total
-                    if line.code == 'NIS':
-                        total_nis += line.total
-                    if line.category_id.code == 'ALW':
-                        allowances += line.total
-                    # if line.category_id.code == 'DED' and str(line.date_from.year) == str(year):
-                    #     deductions += line.total
-                total_gross_earnings += (employee.contract_id.wage * 12) + allowances
+            values = {
+                'total_remuneration': round(total_remuneration, 2),
+                'taxable_travel': round(taxable_travel, 2),
+                'other_taxable_allowances': round(other_taxable_allowances, 2),
+                'total_paye': round(abs(total_paye), 2),
+                'total_health_surcharge': round(abs(total_health_surcharge), 2),
+                'total_nis': round(abs(total_nis), 2),
+                'total_gross_earnings': round(total_gross_earnings, 2),
+                'company_name': company.name,
+                'no_of_employees': no_of_employees,
+                'no_of_non_paye_employees': no_of_non_paye_employees,
+                'no_of_paye_employees': no_of_paye_employees,
+                'no_of_non_hsur_employees': no_of_non_hsur_employees,
+                'no_of_hsur_employees': no_of_hsur_employees,
+                'no_of_non_nis_employees': no_of_non_nis_employees,
+                'no_of_nis_employees': no_of_nis_employees,
+                'gross_of_non_taxable_employees': allowances,
+                'total_commissions': total_commissions,
+                'previous_year_income': previous_year_income,
+                'total_benefits': total_benefits,
+                'non_taxable_travel': non_taxable_travel,
+                'other_non_taxable_allowances': other_non_taxable_allowances,
+                'other_before_deductions': other_before_deductions,
+                'total_before_tax_pension': total_before_tax_pension,
+                'total_after_tax_pension': total_after_tax_pension,
+                'employer_contributions': employer_contributions,
 
-        values = {
-            'total_remuneration': round(total_remuneration, 2),
-            'taxable_travel': round(taxable_travel, 2),
-            'other_taxable_allowances': round(other_taxable_allowances, 2),
-            'total_paye': round(abs(total_paye), 2),
-            'total_health_surcharge': round(abs(total_health_surcharge), 2),
-            'total_nis': round(abs(total_nis), 2),
-            'total_gross_earnings': round(total_gross_earnings, 2),
-            'company_name': company.name,
-            'no_of_employees': no_of_employees,
-            'no_of_non_paye_employees': no_of_non_paye_employees,
-            'no_of_paye_employees': no_of_paye_employees,
-            'no_of_non_hsur_employees': no_of_non_hsur_employees,
-            'no_of_hsur_employees': no_of_hsur_employees,
-            'no_of_non_nis_employees': no_of_non_nis_employees,
-            'no_of_nis_employees': no_of_nis_employees,
-            'gross_of_non_taxable_employees': allowances,
-            'total_commissions': total_commissions,
-            'previous_year_income': previous_year_income,
-            'total_benefits': total_benefits,
-            'non_taxable_travel': non_taxable_travel,
-            'other_non_taxable_allowances': other_non_taxable_allowances,
-            'other_before_deductions': other_before_deductions,
-            'total_before_tax_pension': total_before_tax_pension,
-            'total_after_tax_pension': total_after_tax_pension,
-            'employer_contributions': employer_contributions,
+            }
+        else:
+            for employee in employees:
+                emp_annual_salary = employee.contract_id.wage*12
+                if emp_annual_salary < float(personal_deduction):
+                    no_of_non_paye_employees += 1
 
-        }
-        # print(values, 'values')
+                else:
+                    no_of_paye_employees += 1
+                if health_surcharge_minimum_age < str(employee.age) < health_surcharge_maximum_age:
+                    no_of_non_hsur_employees += 1
+                else:
+                    no_of_hsur_employees += 1
+                if nis_minimum_age < str(employee.age) < nis_maximum_age:
+                    no_of_non_nis_employees += 1
+                else:
+                    no_of_nis_employees += 1
+                payslip = self.env['hr.payslip'].search([('state', '!=', 'cancel'), ('employee_id', '=', employee.id)])
+                if payslip:
+                    total_remuneration += employee.contract_id.wage * 12
+                    for line in payslip.line_ids:
+
+                        if line.code == 'TA' and str(line.date_from.year) == (data['year']):
+                            taxable_travel += line.total
+                        elif line.code != 'TA':
+                            other_taxable_allowances += line.total
+                        # if line.code == 'BASIC' and str(line.date_from.year) == str(year):
+                        #     basic_salary += line.total
+                        if line.code == 'PAYE' and str(line.date_from.year) == (data['year']):
+                            total_paye += line.total
+                        if line.code == 'HSLR'and str(line.date_from.year) == (data['year']):
+                            total_health_surcharge += line.total
+                        if line.code == 'NIS'and str(line.date_from.year) == (data['year']):
+                            total_nis += line.total
+                        if line.category_id.code == 'ALW' and str(line.date_from.year) == (data['year']):
+                            allowances += line.total
+                        # if line.category_id.code == 'DED' and str(line.date_from.year) == str(year):
+                        #     deductions += line.total
+                    total_gross_earnings += (employee.contract_id.wage * 12) + allowances
+
+            values = {
+                'total_remuneration': round(total_remuneration, 2),
+                'taxable_travel': round(taxable_travel, 2),
+                'other_taxable_allowances': round(other_taxable_allowances, 2),
+                'total_paye': round(abs(total_paye), 2),
+                'total_health_surcharge': round(abs(total_health_surcharge), 2),
+                'total_nis': round(abs(total_nis), 2),
+                'total_gross_earnings': round(total_gross_earnings, 2),
+                'company_name': company.name,
+                'no_of_employees': no_of_employees,
+                'no_of_non_paye_employees': no_of_non_paye_employees,
+                'no_of_paye_employees': no_of_paye_employees,
+                'no_of_non_hsur_employees': no_of_non_hsur_employees,
+                'no_of_hsur_employees': no_of_hsur_employees,
+                'no_of_non_nis_employees': no_of_non_nis_employees,
+                'no_of_nis_employees': no_of_nis_employees,
+                'gross_of_non_taxable_employees': allowances,
+                'total_commissions': total_commissions,
+                'previous_year_income': previous_year_income,
+                'total_benefits': total_benefits,
+                'non_taxable_travel': non_taxable_travel,
+                'other_non_taxable_allowances': other_non_taxable_allowances,
+                'other_before_deductions': other_before_deductions,
+                'total_before_tax_pension': total_before_tax_pension,
+                'total_after_tax_pension': total_after_tax_pension,
+                'employer_contributions': employer_contributions,
+
+            }
         return values

@@ -113,20 +113,7 @@ class td4ReportWizard(models.TransientModel):
 
         }
 
-    # def print_report(self):
-    #
-    #     if self.date_end.year != self.date_start.year:
-    #         raise ValidationError("Invalid year selected")
-    #
-    #     total_weeks = self.weeks_for_year(self.date_start.year)
-    #     print(total_weeks)
-    #     data = {'year': self.date_start.year, 'total_weeks': total_weeks}
-    #     return self.env.ref('payroll_reports.employee_td4_report').report_action(self.employee_ids, data=data)
-
     def report_summary(self):
-        # total_weeks = self.weeks_for_year(self.date_start.year)
-        # print(total_weeks)
-        # print(year, 'ppololollll')
-        data = {'year': self.year}
-        print(data, 'data')
-        return self.env.ref('payroll_reports.employee_summary_report').report_action(self.employee_ids, data)
+
+        data = {'year': self.year, 'employee_ids': self.employee_ids.ids}
+        return self.env.ref('payroll_reports.employee_summary_report').report_action(self.employee_ids, data=data)
