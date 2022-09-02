@@ -39,4 +39,5 @@
         name="TD4 Report"
         action="td4_payroll_report_wizard_action"
         parent="hr_payroll.menu_hr_payroll_report"/>
+
 </odoo>

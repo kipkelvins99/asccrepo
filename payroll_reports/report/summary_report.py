@@ -7,7 +7,6 @@ class SummaryReport(models.AbstractModel):
     # @api.model
     def _get_report_values(self, docids, data):
         docs = self.env['hr.employee'].search([])
-        print(type(data['employee_ids']), 'docs')
         return {
             'doc_ids': docids,
             'doc_model': 'hr.employee',
@@ -17,7 +16,6 @@ class SummaryReport(models.AbstractModel):
         }
 
     def summary_report_data(self, data):
-        print(data['employee_ids'],'ppppppppp', type(data['year']) , 'kkkkkkkkkkkkkkk')
         total_remuneration = 0.0
         total_commissions = 0.0
         taxable_travel = 0.0

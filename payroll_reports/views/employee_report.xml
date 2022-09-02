@@ -23,6 +23,26 @@
             <field name="binding_model_id" ref="payroll_reports.model_td4_edit"/>
             <field name="binding_type">report</field>
         </record>
+        <record id="payroll_addition_report" model="ir.actions.report">
+            <field name="name">Monthly Payroll Additions Report</field>
+            <field name="model">additions.deductions.wizard</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">payroll_reports.monthly_payroll_addition_report</field>
+            <field name="report_file">payroll_reports.monthly_payroll_addition_report</field>
+            <field name="print_report_name">'object.name'</field>
+            <field name="binding_model_id" ref="payroll_reports.model_additions_deductions_wizard"/>
+            <field name="binding_type">report</field>
+        </record>
+        <record id="payroll_deduction_report" model="ir.actions.report">
+            <field name="name">Monthly Payroll Deductions Report</field>
+            <field name="model">additions.deductions.wizard</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">payroll_reports.monthly_payroll_deduction_report</field>
+            <field name="report_file">payroll_reports.monthly_payroll_deduction_report</field>
+            <field name="print_report_name">'object.name'</field>
+            <field name="binding_model_id" ref="payroll_reports.model_additions_deductions_wizard"/>
+            <field name="binding_type">report</field>
+        </record>
 
     </data>
 </odoo>

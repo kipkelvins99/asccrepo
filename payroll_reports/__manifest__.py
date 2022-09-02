@@ -20,7 +20,10 @@
             'views/hr_employee_view.xml',
             'views/res_company_view.xml',
             'wizard/td4_edit_view.xml',
-            'report/summary_report.xml'
+            'report/summary_report.xml',
+            'wizard/addition_deduction_wizard.xml',
+            'report/monthly_payroll_additions_report.xml',
+            'report/monthly_payroll_deductions_report.xml',
 
              ],
     "demo": [],
