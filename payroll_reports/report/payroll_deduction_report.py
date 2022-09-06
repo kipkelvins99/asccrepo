@@ -4,7 +4,6 @@ from odoo import models, _
 class SummaryReport(models.AbstractModel):
     _name = 'report.payroll_reports.monthly_payroll_deduction_report'
 
-    # @api.model
     def _get_report_values(self, docids, data):
         docs = self.env['hr.employee'].search([('id', 'in', data['employee_ids'])])
         company = self.env.company
@@ -19,14 +18,12 @@ class SummaryReport(models.AbstractModel):
         return res
 
     def summary_report_data(self, data):
-        categories = self.env['hr.salary.rule'].search([('category_id', '=', 4)])
+        categories = self.env['hr.salary.rule'].search([('category_id.id', '=', self.env.ref('hr_payroll.DED').id)])
         category = []
-        total = 0.0
         for deduct in categories:
             category.append(deduct)
-        category = self.env['hr.salary.rule'].search([('category_id', '=', 4)])
         payslip_lines = self.env['hr.payslip.line'].search(
-            [('employee_id', 'in', data['employee_ids']), ('category_id', '=', 4)])
+            [('employee_id', 'in', data['employee_ids']), ('category_id.id', '=', self.env.ref('hr_payroll.DED').id)])
         lines = []
         category_lst = []
         values = []

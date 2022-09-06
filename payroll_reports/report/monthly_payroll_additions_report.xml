@@ -39,53 +39,44 @@
                                     <th>YTD Totals</th>
                                 </tr>
                                 <t t-foreach="summary_report_data" t-as="o">
-                                    <t t-foreach="o['category']" t-as="c">
-                                        <t t-foreach="c['cat']" t-as="cat">
-                                            <t t-foreach="o['lines']" t-as="d">
-
-                                                <t t-if="d.code == cat.code">
-                                                    <tr>
-
-                                                        <td>
-                                                            <t t-esc="d.employee_id.id"/>
-                                                        </td>
-                                                        <td>
-                                                            <t t-esc="d.employee_id.name"/>
-                                                        </td>
-                                                        <td>
-                                                            <t t-esc="d.date_from"/>
-                                                        </td>
-                                                        <td>
-                                                            <t t-esc="d.code"/>
-                                                        </td>
-                                                        <td></td>
-                                                        <td>
-                                                            <t t-esc="abs(d.total)"/>
-                                                        </td>
-                                                        <td>
-                                                            <t t-esc="t"/>
-                                                        </td>
-
-                                                    </tr>
-                                                </t>
+                                    <t t-foreach="o['main_lines']" t-as="code">
+                                        <t t-foreach="o['lines']" t-as="d">
+                                            <t t-if="d[1] == code[0]">
+                                                <tr>
+                                                    <td>
+                                                        <t t-esc="d[0].id"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="d[0].name"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="d[4]"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="d[1]"/>
+                                                    </td>
+                                                    <td></td>
+                                                    <td>
+                                                        <t t-esc="d[2]"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="d[3]"/>
+                                                    </td>
+                                                </tr>
                                             </t>
-
-                                            <tr>
-                                                <td colspan="4" style="text-align:center; font-size: 18px; font-weight: bold;">
-
-                                                        <t t-esc="cat.name"/>
-
-                                                </td>
-
-                                                <td style="text-align:center; font-size: 18px; font-weight: bold;">Total</td>
-
-                                                <td style="text-align:center; font-size: 18px; font-weight: bold;">
-                                                    <t t-esc="c['amount']"/>
-                                                </td>
-                                                <td></td>
-
-                                            </tr>
                                         </t>
+                                        <tr>
+                                            <td colspan="4"
+                                                style="text-align:center; font-size: 18px; font-weight: bold;">
+                                                <t t-esc="code[0]"/>
+                                            </td>
+                                            <td style="text-align:center; font-size: 18px; font-weight: bold;">Total
+                                            </td>
+                                            <td style="text-align:center; font-size: 18px; font-weight: bold;">
+                                                <t t-esc="code[1]"/>
+                                            </td>
+                                            <td></td>
+                                        </tr>
                                     </t>
                                 </t>
                             </tbody>
