@@ -1,12 +1,10 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
-from dateutil.relativedelta import relativedelta
 from datetime import datetime, timedelta
 
 
-class AddDedWizard(models.TransientModel):
-    _name = 'additions.deductions.wizard'
-    _description = 'Addition Report'
+class TaxReportWizard(models.TransientModel):
+    _name = 'tax.report.wizard'
+    _description = 'Tax Report'
 
     employee_ids = fields.Many2many('hr.employee', string='Employees')
     year = fields.Selection([(str(y), str(y)) for y in range(1990, datetime.now().year + 1)], 'Year', required=True)

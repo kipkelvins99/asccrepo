@@ -19,6 +19,7 @@ class SummaryReport(models.AbstractModel):
 
     def summary_report_data(self, data):
         categories = self.env['hr.salary.rule'].search([('category_id.id', '=', self.env.ref('hr_payroll.DED').id)])
+        employees = self.env['hr.employee'].browse(data['employee_ids'])
         category = []
         for deduct in categories:
             category.append(deduct)
@@ -28,17 +29,32 @@ class SummaryReport(models.AbstractModel):
         category_lst = []
         values = []
         total_amt = 0.0
-        for cat in category:
-            for line in payslip_lines:
-                if str(line.date_from.month) == data['month'] and str(line.date_from.year) == data['year'] and line.code == cat.code:
-                    total_amt += abs(line.total)
+        if employees:
+            for cat in category:
+                for line in payslip_lines:
+                    if str(line.date_from.month) == data['month'] and str(line.date_from.year) == data['year'] and line.code == cat.code:
+                        total_amt += abs(line.total)
 
-                    lines.append(line)
-            category_lst.extend([{
-                'cat': cat,
-                'amount': round(total_amt, 2)
-            }])
-            total_amt = 0.0
+                        lines.append(line)
+                category_lst.extend([{
+                    'cat': cat,
+                    'amount': round(total_amt, 2)
+                }])
+                total_amt = 0.0
+        else:
+            pay_slip_lines = self.env['hr.payslip.line'].search([
+                 ('category_id.id', '=', self.env.ref('hr_payroll.DED').id)])
+            for cat in category:
+                for line in pay_slip_lines:
+                    if str(line.date_from.month) == data['month'] and str(line.date_from.year) == data['year'] and line.code == cat.code:
+                        total_amt += abs(line.total)
+
+                        lines.append(line)
+                category_lst.extend([{
+                    'cat': cat,
+                    'amount': round(total_amt, 2)
+                }])
+                total_amt = 0.0
         values.append({
             'category': category_lst,
             'lines': lines,
