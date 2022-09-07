@@ -14,7 +14,7 @@ class TaxReportWizard(models.TransientModel):
 
     def print(self):
         data = {'employee_ids': self.employee_ids.ids, 'year': self.year, 'month': self.month}
-        return self.env.ref('payroll_reports.payroll_addition_report').report_action(self.employee_ids, data=data)
+        return self.env.ref('payroll_reports.payroll_tax_report').report_action(self.employee_ids, data=data)
 
     # def deductions_report(self):
     #     data = {'employee_ids': self.employee_ids.ids, 'year': self.year, 'month': self.month}

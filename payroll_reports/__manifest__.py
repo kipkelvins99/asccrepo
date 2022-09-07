@@ -24,6 +24,8 @@
             'wizard/addition_deduction_wizard.xml',
             'report/monthly_payroll_additions_report.xml',
             'report/monthly_payroll_deductions_report.xml',
+            'wizard/tax_report_wizard.xml',
+            'report/monthly_tax_report.xml',
 
              ],
     "demo": [],

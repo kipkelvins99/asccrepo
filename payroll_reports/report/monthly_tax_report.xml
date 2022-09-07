@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="monthly_tax_report">
+            <t t-call="web.html_container">
+                <!--                <t t-foreach="docs" t-as="o">-->
+                <t t-call="web.basic_layout">
+                    <div class="text-center">
+                        <span>
+                            <h5>
+                                <t t-esc="data['company']"/>
+                            </h5>
+                        </span>
+                    </div>
+                    <div class="text-center">
+                        <span>
+                            <h3>
+                                TAX REPORT
+                            </h3>
+                        </span>
+                    </div>
+                    <br/>
+                    <div style="right:20px; text-align:right">
+                        <span>Year :
+                            <t t-esc="data['year']"/>
+                        </span>
+                    </div>
+                    <br/>
+                    <div class="page summary-table">
+                        <table class="table  dark-border" width="861" border="1">
+                            <tbody>
+                                <tr>
+                                    <th class="t-head">ID</th>
+                                    <th>Employee</th>
+                                    <th>BIR Number</th>
+                                    <th>PAYE</th>
+                                    <th>HSUR</th>
+                                    <th>Total</th>
+                                </tr>
+                                <t t-foreach="summary_report_data" t-as="o">
+                                    <t t-foreach="o['main_lines']" t-as="depart">
+                                        <t t-foreach="o['lines']" t-as="d">
+                                            <t t-if="depart[0].id  == d[0].department_id.id ">
+                                                <tr>
+                                                    <td>
+                                                        <t t-esc="d[0].id"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="d[0].name"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="d[0].bir_file_number"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="d[1]"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="d[2]"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="d[3]"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </t>
+                                        <tr>
+                                            <td colspan="2"
+                                                style="text-align:center; font-size: 18px; font-weight: bold;">
+                                                <t t-esc="depart[0].name"/>
+                                            </td>
+                                            <td style="text-align:center; font-size: 18px; font-weight: bold;">Total
+                                            </td>
+                                            <td style="text-align:center; font-size: 18px; font-weight: bold;">
+                                                <t t-esc="depart[1]"/>
+                                            </td>
+                                            <td style="text-align:center; font-size: 18px; font-weight: bold;">
+                                                <t t-esc="depart[2]"/>
+                                            </td>
+                                            <td style="text-align:center; font-size: 18px; font-weight: bold;">
+                                                <t t-esc="depart[3]"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="text-align:center; font-size: 14px; font-weight: bold;">
+                                            <td colspan="5">Total Number of Employees in dept:</td>
+                                            <td colspan="1"><t t-esc="depart[4]"/></td>
+                                        </tr>
+                                        <tr style="text-align:center; font-size: 14px; font-weight: bold;">
+                                            <td colspan="5">Number of Employees paid PAYE:</td>
+                                            <td colspan="1"><t t-esc="depart[5]"/></td>
+                                        </tr>
+                                        <tr style="text-align:center; font-size: 14px; font-weight: bold;">
+                                            <td colspan="5">Number of Employees paid HSUR:</td>
+                                            <td colspan="1"><t t-esc="depart[6]"/></td>
+                                        </tr>
+                                    </t>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
