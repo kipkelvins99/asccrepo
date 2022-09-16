@@ -55,7 +55,7 @@
                         <div class="row" style="padding-top:30px;  ">
                             <div class="col-6">
                                 <div class="d-flex" style="width:150%;font-size:18px;">
-                                    <p style="width:250px;font-weight: bold;">CONTRIBUTION PERIOD FROM :</p>
+                                    <p style="width:300px;font-weight: bold;">CONTRIBUTION PERIOD FROM :</p>
                                     <p style="width:200px">
                                         <t t-esc="data['date_start']"/>
                                     </p>
