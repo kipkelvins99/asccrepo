@@ -26,7 +26,9 @@
             'report/monthly_payroll_deductions_report.xml',
             'wizard/tax_report_wizard.xml',
             'report/monthly_tax_report.xml',
-            'data/account_data.xml'
+            'data/account_data.xml',
+            'wizard/nis_report_wizard.xml',
+            'report/nis_report.xml',
              ],
     "demo": [],
     "images": [],

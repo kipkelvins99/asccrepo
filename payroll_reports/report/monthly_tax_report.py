@@ -39,13 +39,16 @@ class TaxReport(models.AbstractModel):
                 employee_count = 0
                 employee_paye_count = 0
                 employee_hsur_count = 0
+                # inbound = self.env.ref['account_journal_inbound_payment_method_rel'].search([])
+                # print(inbound)
                 for employee in employees:
                     payslip_id = payslip.filtered(lambda x: str(x.date_from.month) == data['month'] and
                                                      x.employee_id.id == employee.id and department ==
                                                      employee.department_id)
                     print(employee, 'moooveee')
                     print(payslip_id.move_id.journal_id, 'moooveee')
-                    print(payslip_id.journal_id, 'journal')
+                    print(payslip_id.journal_id.inbound_payment_method_ids, 'in journal')
+                    print(payslip_id.journal_id.outbound_payment_method_ids, 'out journal')
                     pay_lines = payslip.line_ids.filtered(
                         lambda x: str(x.date_from.month) == data['month'] and
                                   x.employee_id.id == employee.id and department ==
