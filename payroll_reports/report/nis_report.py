@@ -36,7 +36,6 @@ class NisReport(models.AbstractModel):
             employees_select = employees.filtered(lambda x: x.id in data['employee_ids'])
             for employee in employees_select:
                 payslip_latest = payslips.filtered(lambda x: x.employee_id == employee)[-1]
-                print(payslip_latest.date_from, 'ppppppppppp')
                 emp_count += 1
                 if str(employee.age) and employee.contract_id.wage:
                     for line in nis_rates.nis_line_ids:
@@ -69,7 +68,6 @@ class NisReport(models.AbstractModel):
             for employee in employees:
                 emp_count += 1
                 if str(employee.age) and employee.contract_id.wage:
-                    print(employee,employee.age,employee.contract_id.wage)
                     for line in nis_rates.nis_line_ids:
                         monthly_earn = line.monthly_earnings.split()
                         if nis_minimum_age and nis_maximum_age:
@@ -101,8 +99,6 @@ class NisReport(models.AbstractModel):
                 main_lines.append(emp_tuple)
             employee_count = (emp_count, round(total_contribution, 2))
             lines.append(employee_count)
-            print(lines)
-
         values.append({
             'main_lines': main_lines,
             'lines': lines,
