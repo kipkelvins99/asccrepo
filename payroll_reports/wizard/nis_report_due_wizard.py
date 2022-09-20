@@ -1,9 +1,10 @@
 from odoo import fields, models
 from dateutil.relativedelta import relativedelta
+from datetime import datetime
 
 
-class NisReportWizard(models.TransientModel):
-    _name = 'nis.report.wizard'
+class NisReportDueWizard(models.TransientModel):
+    _name = 'nis.report.due.wizard'
     _description = 'NIS Report'
 
     employee_ids = fields.Many2many('hr.employee', string='Employees')
@@ -22,4 +23,4 @@ class NisReportWizard(models.TransientModel):
 
     def print(self):
         data = {'employee_ids': self.employee_ids.ids, 'date_start': self.date_start, 'date_end': self.date_end}
-        return self.env.ref('payroll_reports.payroll_nis_report').report_action(self.employee_ids, data=data)
+        return self.env.ref('payroll_reports.payroll_nis_report_dues').report_action(self.employee_ids, data=data)

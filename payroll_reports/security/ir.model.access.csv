@@ -5,3 +5,5 @@ access_year_periods,access_year_periods,model_year_periods,base.group_user,1,1,1
 access_additions_deductions_wizard,access_additions_deductions_wizard,model_additions_deductions_wizard,base.group_user,1,1,1,1
 access_tax_report_wizard,access_tax_report_wizard,model_tax_report_wizard,base.group_user,1,1,1,1
 access_nis_report_wizard,access_nis_report_wizard,model_nis_report_wizard,base.group_user,1,1,1,1
+access_payroll_monthly_summary_report_wizard,access_payroll_monthly_summary_report_wizard,model_payroll_monthly_summary_report_wizard,base.group_user,1,1,1,1
+access_nis_report_due_wizard,access_nis_report_due_wizard,model_nis_report_due_wizard,base.group_user,1,1,1,1

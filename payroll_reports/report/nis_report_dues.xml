@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="monthly_nis_dues_report">
+            <t t-call="web.html_container">
+                <t t-call="web.basic_layout">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <table class="table  dark-border" width="700" border="1">
+                                        <tbody>
+                                            <tr>
+                                                <div class="row">
+                                                    <div class="col-12 text-center">
+                                                        <h5 style="font-size: 20px; font-weight: bold; margin-top: 10px">
+                                                            THE NATIONAL INSURANCE BOARD
+                                                        </h5>
+                                                        <h5 style="font-size: 20PX; font-weight: bold;">
+                                                            STATEMENT OF NATIONAL INSURANCE CONTRIBUTIONS PAID/DUE
+                                                        </h5>
+                                                        <br/>
+                                                    </div>
+                                                </div>
+                                            </tr>
+                                            <tr>
+                                                <!--                                <div class="row" style="padding-top:30px;  ">-->
+                                                <!--                                    <div class="col-6">-->
+                                                <div class="d-flex" style="width:150%;font-size:14px;">
+                                                    <p style="width:250px;font-weight: bold;">
+                                                        <u>INSTRUCTIONS</u>
+                                                    </p>
+                                                </div>
+                                            </tr>
+                                            <tr>
+                                                <div>
+                                                    <p style="width:300px;font-weight: bold; font-size: 13px;">1. Please
+                                                        complete this form in
+                                                        duplicate
+                                                    </p>
+                                                </div>
+                                            </tr>
+                                            <tr>
+                                                <div>
+                                                    <p style="width:600px;font-weight: bold;font-size: 13px;">2. A
+                                                        separate form
+                                                        must be completed for
+                                                        each pay period (not exceeding one(1) month)
+                                                    </p>
+                                                </div>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <!--                    <div class="page nis-table">-->
+                                    <table class="table  dark-border" width="700" border="1">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div class="row">
+                                                        <div class="col-6" style="font-size:14px; font-weight: bold; ">
+                                                            <p>
+                                                                <u>SECTION "A' ‑ EMPLOYER INFORMATION</u>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-3" style="font-size:14px; font-weight: bold; ">
+                                                            <p>EMPLOYER'S TRADE NAME
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-2" style="font-size:14px; font-weight: bold; ">
+                                                            <p>
+                                                                <t t-esc="data['company'].name"/>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-3" style="font-size:14px; font-weight: bold; ">
+                                                            <p>ADDRESS</p>
+                                                        </div>
+                                                        <div class="col-2" style="font-size:14px; font-weight: bold; ">
+                                                            <p>
+                                                                <span style="font-size: 12px; font-weight: bold;">
+                                                                    <span t-esc="data['company'].street"/>
+                                                                    <span t-esc="data['company'].city"/>
+                                                                    <span t-esc="data['company'].state_id.name"/>
+                                                                    <span t-esc="data['company'].zip"/>
+                                                                </span>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-3" style="font-size:14px; font-weight: bold; ">
+                                                            <p>TELEPHONE NO
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-2" style="font-size:14px; font-weight: bold; ">
+                                                            <p>
+                                                                <t t-esc="data['company'].phone"/>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-3" style="font-size:14px; font-weight: bold; ">
+                                                            <p>CONTRIBUTIONS DUE FOR PAY PERIOD</p>
+                                                        </div>
+                                                        <div class="col-2" style="font-size:14px; font-weight: bold; ">
+                                                            <p>
+                                                                <t t-esc="data['date_start']"/>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-2" style="font-size:14px; font-weight: bold; ">
+                                                            <p>TO</p>
+                                                        </div>
+                                                        <div class="col-2" style="font-size:14px; font-weight: bold; ">
+                                                            <p>
+                                                                <t t-esc="data['date_end']"/>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <!--                                </td>-->
+                                                    <!--                                <td>-->
+                                                    <br/>
+                                                    <div class="row">
+                                                        <div class="col-3" style="font-size:14px; ">
+                                                            <p>WHERE THE PERIOD EXCEEDS ONE MONTH, COMPLETE SECTION F
+                                                                GIVING SEPERATE DETAILS FOR EACH MONTH:
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-2" style="font-size:14px; ">
+                                                            <p>
+                                                                <t t-esc="data['company'].phone"/>
+                                                            </p>
+                                                        </div>
+
+                                                        <div class="col-3"
+                                                             style="font-size:14px; font-weight: bold; text-align: right; ">
+                                                            <p>NO.OF EMPLOYEES BEING PAID FOR:
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-2" style="font-size:14px; font-weight: bold; ">
+                                                            <p>
+                                                                <!--                                                <t t-esc="data['company'].phone"/>-->
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <!--                                    <table>-->
+                                                    <!--                                        <tbody>-->
+                                                    <!--                                            <tr>-->
+                                                    <div>
+                                                        <div class="row">
+                                                            <div class="col-6"
+                                                                 style="font-size:14px; font-weight: bold; ">
+                                                                <p>
+                                                                    <u>SECTION "B" ‑ VALUE OF CONTRIBUTIONS PAYABLE</u>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <br/>
+                                                        <table>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>
+                                                                        wdfg
+                                                                    </td>
+                                                                    <td>
+                                                                        wdfg
+                                                                    </td>
+                                                                    <td>
+                                                                        wdfg
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <!--                                                                    </td>-->
+                                                    <!--                                    <td>-->
+                                                    <div>
+                                                        <div class="row">
+                                                            <div class="col-6"
+                                                                 style="font-size:14px; font-weight: bold; ">
+                                                                <p>
+                                                                    <u>SECTION "C" ‑ METHOD OF PAYMENT</u>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <br/>
+                                                        <table>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>
+                                                                        wdfg
+                                                                    </td>
+                                                                    <td>
+                                                                        wdfg
+                                                                    </td>
+                                                                    <td>
+                                                                        wdfg
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </td>
+                                                <!--                                                </td>-->
+                                                <!--                                            </tr>-->
+                                                <!--                                        </tbody>-->
+                                                <!--                                    </table>-->
+                                                <!--                                </td>-->
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!--                    </div>-->
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
