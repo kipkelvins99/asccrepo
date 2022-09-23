@@ -1,4 +1,5 @@
 from odoo import models, _
+from datetime import datetime
 
 
 class NisReport(models.AbstractModel):
@@ -31,6 +32,10 @@ class NisReport(models.AbstractModel):
         nis_rates = self.env['nis.rates'].search([], limit=1)
         employees = self.env['hr.employee'].search([])
         payslips = self.env['hr.payslip'].search([])
+        date_start = datetime.strptime(data['date_start'], '%Y-%m-%d')
+        date_end = datetime.strptime(data['date_end'], '%Y-%m-%d')
+        days = abs(date_start.date() - date_end.date()).days
+        weeks = round(days / 7)
 
         if data['employee_ids']:
             employees_select = employees.filtered(lambda x: x.id in data['employee_ids'])
@@ -56,9 +61,9 @@ class NisReport(models.AbstractModel):
                                     elif employee.contract_id.wage > float(monthly_earn[2]):
                                         amount = line.employees_weekly_contri
 
-                    total_contribution_week = float(amount) * 4
+                    total_contribution_week = float(amount) * weeks
                     total_contribution += round(total_contribution_week, 2)
-                    emp_tuple = (employee, amount, total_contribution_week, payslip_latest.date_from.year,
+                    emp_tuple = (employee, amount, round(total_contribution_week, 2), payslip_latest.date_from.year,
                                  payslip_latest.date_from.month, payslip_latest.date_from.day)
                     main_lines.append(emp_tuple)
             employee_count = (emp_count, round(total_contribution, 2))
@@ -66,41 +71,45 @@ class NisReport(models.AbstractModel):
 
         else:
             for employee in employees:
-                emp_count += 1
-                if str(employee.age) and employee.contract_id.wage:
-                    for line in nis_rates.nis_line_ids:
-                        monthly_earn = line.monthly_earnings.split()
-                        if nis_minimum_age and nis_maximum_age:
-                            if nis_minimum_age < str(employee.age) < nis_maximum_age:
-                                if monthly_earn[2] != 'over':
-                                    if float(monthly_earn[0]) <= employee.contract_id.wage <= float(monthly_earn[2]):
-                                        amount = line.employees_weekly_contri
-                                    elif employee.contract_id.wage > float(monthly_earn[2]):
-                                        amount = line.employees_weekly_contri
-                        else:
-                            if nis_rates.nis_minimum_age < str(employee.age) < nis_rates.nis_maximum_age:
-                                if str(monthly_earn[2]) != 'over':
-                                    if float(monthly_earn[0]) < employee.contract_id.wage < float(monthly_earn[2]):
-                                        amount = line.employees_weekly_contri
-                                    elif employee.contract_id.wage > float(monthly_earn[2]):
-                                        amount = line.employees_weekly_contri
-                else:
-                    for line in nis_rates.nis_line_ids:
-                        monthly_earn = line.monthly_earnings.split()
-                        if monthly_earn[2] != 'over':
-                            if float(monthly_earn[0]) <= employee.contract_id.wage <= float(monthly_earn[2]):
-                                amount = line.employees_weekly_contri
-                            elif employee.contract_id.wage > float(monthly_earn[2]):
-                                amount = line.employees_weekly_contri
-                total_contribution_week = float(amount) * 4
-                total_contribution += total_contribution_week
-                total_tup = total_contribution_week
-                emp_tuple = (employee, amount, total_tup)
-                main_lines.append(emp_tuple)
+                payslip = payslips.filtered(lambda x: x.employee_id == employee)
+                if payslip:
+                    payslip_latest = payslip[-1]
+                    emp_count += 1
+                    if str(employee.age) and employee.contract_id.wage:
+                        for line in nis_rates.nis_line_ids:
+                            monthly_earn = line.monthly_earnings.split()
+                            if nis_minimum_age and nis_maximum_age:
+                                if nis_minimum_age < str(employee.age) < nis_maximum_age:
+                                    if monthly_earn[2] != 'over':
+                                        if float(monthly_earn[0]) <= employee.contract_id.wage <= float(monthly_earn[2]):
+                                            amount = line.employees_weekly_contri
+                                        elif employee.contract_id.wage > float(monthly_earn[2]):
+                                            amount = line.employees_weekly_contri
+                            else:
+                                if nis_rates.nis_minimum_age < str(employee.age) < nis_rates.nis_maximum_age:
+                                    if str(monthly_earn[2]) != 'over':
+                                        if float(monthly_earn[0]) < employee.contract_id.wage < float(monthly_earn[2]):
+                                            amount = line.employees_weekly_contri
+                                        elif employee.contract_id.wage > float(monthly_earn[2]):
+                                            amount = line.employees_weekly_contri
+                    else:
+                        for line in nis_rates.nis_line_ids:
+                            monthly_earn = line.monthly_earnings.split()
+                            if monthly_earn[2] != 'over':
+                                if float(monthly_earn[0]) <= employee.contract_id.wage <= float(monthly_earn[2]):
+                                    amount = line.employees_weekly_contri
+                                elif employee.contract_id.wage > float(monthly_earn[2]):
+                                    amount = line.employees_weekly_contri
+                    total_contribution_week = float(amount) * weeks
+                    total_contribution += total_contribution_week
+                    emp_tuple = (employee, amount, round(total_contribution_week, 2), payslip_latest.date_from.year,
+                                 payslip_latest.date_from.month, payslip_latest.date_from.day)
+                    main_lines.append(emp_tuple)
             employee_count = (emp_count, round(total_contribution, 2))
             lines.append(employee_count)
         values.append({
             'main_lines': main_lines,
             'lines': lines,
+            'weeks': weeks,
         })
         return values

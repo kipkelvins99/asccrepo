@@ -1,4 +1,5 @@
-from odoo import models, _
+from odoo import models
+from datetime import datetime
 
 
 class NisReportDues(models.AbstractModel):
@@ -18,7 +19,7 @@ class NisReportDues(models.AbstractModel):
         }
         return res
 
-    def nis_report_data(self, data):
+    def nis_report_data(self, data, datetime=datetime):
         values = []
         main_lines = []
         lines = []
@@ -31,7 +32,10 @@ class NisReportDues(models.AbstractModel):
         nis_rates = self.env['nis.rates'].search([], limit=1)
         employees = self.env['hr.employee'].search([])
         payslips = self.env['hr.payslip'].search([])
-
+        date_start = datetime.strptime(data['date_start'], '%Y-%m-%d')
+        date_end = datetime.strptime(data['date_end'], '%Y-%m-%d')
+        days = abs(date_start.date()-date_end.date()).days
+        weeks = round(days/7)
         if data['employee_ids']:
             employees_select = employees.filtered(lambda x: x.id in data['employee_ids'])
             for employee in employees_select:
@@ -56,14 +60,15 @@ class NisReportDues(models.AbstractModel):
                                     elif employee.contract_id.wage > float(monthly_earn[2]):
                                         amount = line.employees_weekly_contri
 
-                    total_contribution_week = float(amount) * 4
+                    total_contribution_week = float(amount) * weeks
                     total_contribution += round(total_contribution_week, 2)
+
                     emp_tuple = (employee, amount, total_contribution_week, payslip_latest.date_from.year,
                                  payslip_latest.date_from.month, payslip_latest.date_from.day)
                     main_lines.append(emp_tuple)
-            employee_count = (emp_count, round(total_contribution, 2))
+            total_contribution_result = str(round(total_contribution, 2)).split('.')
+            employee_count = (emp_count, total_contribution_result, round(total_contribution, 2))
             lines.append(employee_count)
-
         else:
             for employee in employees:
                 emp_count += 1
@@ -92,12 +97,13 @@ class NisReportDues(models.AbstractModel):
                                 amount = line.employees_weekly_contri
                             elif employee.contract_id.wage > float(monthly_earn[2]):
                                 amount = line.employees_weekly_contri
-                total_contribution_week = float(amount) * 4
+                total_contribution_week = float(amount) * weeks
                 total_contribution += total_contribution_week
                 total_tup = total_contribution_week
                 emp_tuple = (employee, amount, total_tup)
                 main_lines.append(emp_tuple)
-            employee_count = (emp_count, round(total_contribution, 2))
+            total_contribution_result = str(round(total_contribution, 2)).split('.')
+            employee_count = (emp_count, total_contribution_result, round(total_contribution, 2))
             lines.append(employee_count)
         values.append({
             'main_lines': main_lines,
