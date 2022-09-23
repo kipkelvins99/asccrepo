@@ -28,13 +28,13 @@
         </field>
     </record>
     <record id="nis_report_due_action" model="ir.actions.act_window">
-        <field name="name">NIS Report Due</field>
+        <field name="name">NIS Report Paid/Dues</field>
         <field name="res_model">nis.report.due.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>
     <menuitem id="menu_nis_report_due"
-              name="NIS Report Dues"
+              name="NIS Report Paid/Dues"
               action="nis_report_due_action"
               parent="hr_payroll.menu_hr_payroll_report"/>
 </odoo>
