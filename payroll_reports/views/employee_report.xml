@@ -2,7 +2,7 @@
 <odoo>
     <data>
 
-       <record id="employee_summary_report" model="ir.actions.report">
+        <record id="employee_summary_report" model="ir.actions.report">
             <field name="name">Summary Report</field>
             <field name="model">hr.employee</field>
             <field name="report_type">qweb-pdf</field>
@@ -11,6 +11,8 @@
             <field name="print_report_name">'Summary Report'</field>
             <field name="binding_model_id" ref="hr.model_hr_employee"/>
             <field name="binding_type">report</field>
+
+
         </record>
 
         <record id="employee_td4_report" model="ir.actions.report">
@@ -22,6 +24,7 @@
             <field name="print_report_name">object.name</field>
             <field name="binding_model_id" ref="payroll_reports.model_td4_edit"/>
             <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="td4_paperformat_id"/>
         </record>
         <record id="payroll_addition_report" model="ir.actions.report">
             <field name="name">Monthly Payroll Additions Report</field>
@@ -82,6 +85,22 @@
             <field name="print_report_name">'object.name'</field>
             <field name="binding_model_id" ref="payroll_reports.model_nis_report_due_wizard"/>
             <field name="binding_type">report</field>
+        </record>
+
+        <record id="td4_paperformat_id" model="report.paperformat">
+            <field name="name">Custom Paper Format</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_height">297</field>
+            <field name="page_width">210</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">15</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">10</field>
+            <field name="margin_right">10</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">2</field>
+            <field name="dpi">90</field>
         </record>
 
     </data>

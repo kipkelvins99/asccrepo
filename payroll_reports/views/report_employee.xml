@@ -13,16 +13,17 @@
                                             <div class="row">
                                                 <div class="col-3 mt-4">
                                                     <img class="ml-3"
-                                                         src="/payroll_reports/static/src/img/report icon.png" alt="Logo"
+                                                         src="/payroll_reports/static/src/img/report icon.png"
+                                                         alt="Logo"
                                                          style="width:60%"/>
                                                 </div>
                                                 <div class="col-6 text-center govern-details">
                                                     <div class="mt-4">
-                                                        <span class="text-center">GOVERNMENT OF THE REPUBLIC OF TRININAD
+                                                        <span class="text-center">GOVERNMENT OF THE REPUBLIC OF TRINIDAD
                                                             &amp; TOBAGO
                                                         </span>
-                                                    </div>
-                                                    <div>
+                                                        <!--                                                    </div>-->
+                                                        <!--                                                    <div>-->
                                                         <span>MINSTRY OF FINANCE, INLAND REVENUE DIVISION</span>
                                                     </div>
                                                     <div>
@@ -48,7 +49,11 @@
                                                     </span>
                                                     <div class="mt-3">
                                                         <h4>
-                                                            <span><b><t t-esc="data['year']"/></b></span>
+                                                            <span>
+                                                                <b>
+                                                                    <t t-esc="data['year']"/>
+                                                                </b>
+                                                            </span>
                                                         </h4>
                                                     </div>
                                                 </div>
@@ -59,7 +64,9 @@
                                         <td rowspan="11" style="vertical-align: middle;max-width:50px">
                                             <div class="vertical-text"
                                                  style="-ms-transform: rotate(-90deg); /* IE 9 */ transform: rotate(-90deg);-webkit-transform: rotate(-90deg);white-space: nowrap;">
-                                                <b>TD4-<t t-esc="data['year']"/></b>
+                                                <b>TD4-
+                                                    <t t-esc="data['year']"/>
+                                                </b>
                                             </div>
                                         </td>
                                         <td colspan="3" width="33%">
@@ -69,12 +76,15 @@
                                                 </span>
                                             </div>
                                             <div class="employee_name">
-                                                <span class="content-span"><t t-esc="o.name"/> </span>
+                                                <span class="content-span">
+                                                    <t t-esc="o.name"/>
+                                                </span>
                                             </div>
                                             <div class="employee_address">
                                                 <span class="content-span">
                                                     <div name="company_address" class="">
-                                                        <span class="company_address" t-field="o.address_home_id" t-options='{"widget": "contact", "fields": ["address"], "no_marker": true}'/>
+                                                        <span class="company_address" t-field="o.address_home_id"
+                                                              t-options='{"widget": "contact", "fields": ["address"], "no_marker": true}'/>
                                                     </div>
                                                 </span>
                                             </div>
@@ -89,7 +99,8 @@
                                             <div>
                                                 <span class="content-span ">
                                                     <div name="company_address" class="mt-3">
-                                                        <span class="company_address" t-field="o.company_id.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
+                                                        <span class="company_address" t-field="o.company_id.partner_id"
+                                                              t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
                                                     </div>
                                                 </span>
                                             </div>
@@ -134,28 +145,36 @@
                                         <td>
                                             <div class="text-center">
                                                 <b>
-                                                    <span class=""><t t-esc="o.bir_file_number"/></span>
+                                                    <span class="">
+                                                        <t t-esc="o.bir_file_number"/>
+                                                    </span>
                                                 </b>
                                             </div>
                                         </td>
                                         <td colspan="2">
                                             <div class="text-center">
                                                 <b>
-                                                    <span class=""><t t-esc="o.nis_number"/></span>
+                                                    <span class="">
+                                                        <t t-esc="o.nis_number"/>
+                                                    </span>
                                                 </b>
                                             </div>
                                         </td>
                                         <td colspan="2">
                                             <div class="text-center">
                                                 <b>
-                                                    <span class=""><t t-esc="o.company_id.paye_file_number"/></span>
+                                                    <span class="">
+                                                        <t t-esc="o.company_id.paye_file_number"/>
+                                                    </span>
                                                 </b>
                                             </div>
                                         </td>
                                         <td colspan="3">
                                             <div class="text-center">
                                                 <b>
-                                                    <span class=""><t t-esc="o.company_id.bir_file_number"/></span>
+                                                    <span class="">
+                                                        <t t-esc="o.company_id.bir_file_number"/>
+                                                    </span>
                                                 </b>
                                             </div>
                                         </td>
@@ -256,22 +275,28 @@
                                         <td>
                                             <div class="text-right">
                                                 <b>
-                                                    <t t-set="total_deduction_as_per_td1" t-value="o.get_total_deduction(data['year'])"/>
-                                                    <span class=""><t t-esc="total_deduction_as_per_td1"/>0</span>
+                                                    <t t-set="total_deduction_as_per_td1"
+                                                       t-value="o.get_total_deduction(data['year'])"/>
+                                                    <span class=""><t t-esc="total_deduction_as_per_td1"/>0
+                                                    </span>
                                                 </b>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="text-right">
                                                 <b>
-                                                    <span class=""><t t-esc="data['total_weeks']"/> </span>
+                                                    <span class="">
+                                                        <t t-esc="data['total_weeks']"/>
+                                                    </span>
                                                 </b>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="text-right">
                                                 <b>
-                                                    <span class=""><t t-esc="o.get_remuneration()"/> </span>
+                                                    <span class="">
+                                                        <t t-esc="o.get_remuneration()"/>
+                                                    </span>
                                                 </b>
                                             </div>
                                         </td>
@@ -407,7 +432,9 @@
                                             <div class="text-right">
                                                 <b>
                                                     <t t-set="gross_earning" t-value="o.calculate_gross_earnings()"/>
-                                                    <span class=""><t t-esc="gross_earning"/> </span>
+                                                    <span class="">
+                                                        <t t-esc="gross_earning"/>
+                                                    </span>
                                                 </b>
                                             </div>
                                         </td>
@@ -435,14 +462,18 @@
                                         <td colspan="2">
                                             <div class="text-right">
                                                 <b>
-                                                    <span class=""><t t-esc="o.get_national_insurance_deduction(data['total_weeks'])"/> </span>
+                                                    <span class="">
+                                                        <t t-esc="o.get_national_insurance_deduction(data['total_weeks'])"/>
+                                                    </span>
                                                 </b>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="text-right">
                                                 <b>
-                                                    <span class=""><t t-esc="o.get_income_tax_diduction(gross_earning,total_deduction_as_per_td1)"/></span>
+                                                    <span class="">
+                                                        <t t-esc="o.get_income_tax_diduction(gross_earning,total_deduction_as_per_td1)"/>
+                                                    </span>
                                                 </b>
                                             </div>
                                         </td>
@@ -463,68 +494,70 @@
                                     </tr>
 
                                     <tr>
-                                        <td colspan="2">
-                                            <div class="text-center" style="padding-top: 5px;">
-                                                    <span style="padding: 5px; outline: 1px solid #000"><t t-esc="data['total_weeks']"/> </span>
-                                                </div>
+                                        <td colspan="3">
+                                            <div>
+                                                <span style="padding: 5px; outline: 1px solid #000">
+                                                    <t t-esc="data['total_weeks']"/>
+                                                </span>
+                                            </div>
                                             <div class="text-center mt-2">
-                                                    <span class="content-span">
-                                                        Number of Weeks for which Health Surcharge was Deducted
-                                                    </span>
+                                                <span class="content-span">
+                                                    Number of Weeks for which Health Surcharge was Deducted
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td colspan="3">
+                                            <div class="text-center" style="padding-top: 5px;">
+                                                <span style="padding: 5px; outline: 1px solid #000">
+                                                    <!--                                                        <t t-if="o.number_of_weeks_at_8_25">-->
+                                                    <t t-esc="round(o.number_of_weeks_at_8_25)"/>
+                                                    <!--                                                        </t>-->
+                                                    <!--                                                        <t t-else="">0</t>-->
+                                                </span>
+                                            </div>
+                                            <div class="text-center mt-2">
+                                                <span class="content-span">
+                                                    Number of Weeks at $8.25
+                                                </span>
+
+                                            </div>
+                                        </td>
+                                        <td colspan="3">
+                                            <!--                                            <div class="text-center" style="padding-top: 5px;">-->
+                                            <!--                                                    <span style="padding: 5px; outline: 1px solid #000">-->
+                                            <!--&lt;!&ndash;                                                        <t t-if="o.number_of_weeks_at_4_80">&ndash;&gt;-->
+                                            <!--                                                            <t t-esc="round(o.number_of_weeks_at_4_80)"/>-->
+                                            <!--&lt;!&ndash;                                                        </t>&ndash;&gt;-->
+                                            <!--&lt;!&ndash;                                                        <t t-else="">&ndash;&gt;-->
+                                            <!--&lt;!&ndash;                                                            0&ndash;&gt;-->
+                                            <!--&lt;!&ndash;                                                        </t>&ndash;&gt;-->
+                                            <!--                                                    </span>-->
+                                            <!--                                                </div>-->
+                                            <div class="text-center mt-2">
+                                                <span class="content-span">
+                                                    Number of Weeks at $4.80
+                                                </span>
+
                                             </div>
                                         </td>
                                         <td colspan="2">
-                                            <div class="text-center" style="padding-top: 5px;">
-                                                    <span style="padding: 5px; outline: 1px solid #000">
-<!--                                                        <t t-if="o.number_of_weeks_at_8_25">-->
-                                                            <t t-esc="round(o.number_of_weeks_at_8_25)"/>
-<!--                                                        </t>-->
-<!--                                                        <t t-else="">0</t>-->
-                                                    </span>
-                                                </div>
+                                            <!--                                            <div class="text-center" style="padding-top: 5px;">-->
+                                            <!--                                                    <span style="padding: 5px; outline: 1px solid #000">-->
+                                            <!--                                                        <t t-esc="o.get_health_surcharge_deducted()"/>-->
+                                            <!--                                                    </span>-->
+                                            <!--                                                </div>-->
                                             <div class="text-center mt-2">
-                                                    <span class="content-span">
-                                                        Number of Weeks at $8.25
-                                                    </span>
+                                                <span class="content-span">
+                                                    Health Surcharge Deducted
+                                                </span>
 
-                                                </div>
-                                        </td>
-                                        <td colspan="2">
-                                            <div class="text-center" style="padding-top: 5px;">
-                                                    <span style="padding: 5px; outline: 1px solid #000">
-<!--                                                        <t t-if="o.number_of_weeks_at_4_80">-->
-                                                            <t t-esc="round(o.number_of_weeks_at_4_80)"/>
-<!--                                                        </t>-->
-<!--                                                        <t t-else="">-->
-<!--                                                            0-->
-<!--                                                        </t>-->
-                                                    </span>
-                                                </div>
-                                            <div class="text-center mt-2">
-                                                    <span class="content-span">
-                                                        Number of Weeks at $4.80
-                                                    </span>
-
-                                                </div>
-                                        </td>
-                                        <td colspan="2">
-                                            <div class="text-center" style="padding-top: 5px;">
-                                                    <span style="padding: 5px; outline: 1px solid #000">
-                                                        <t t-esc="o.get_health_surcharge_deducted()"/>
-                                                    </span>
-                                                </div>
-                                            <div class="text-center mt-2">
-                                                    <span class="content-span">
-                                                        Health Surcharge Deducted
-                                                    </span>
-
-                                                </div>
+                                            </div>
                                         </td>
 
 
                                     </tr>
 
-                                    <!--<tr>
+<tr>
 
 
                                         <td colspan="3">
@@ -579,7 +612,7 @@
                                                 </div>
                                             </div>
                                         </td>
-                                    </tr>-->
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>

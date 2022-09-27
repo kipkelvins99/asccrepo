@@ -33,7 +33,7 @@ class HrEmployee(models.Model):
             if line.code == 'NIS' and str(line.date_from.year) == str(year):
                 nis_amount += line.total
 
-        return abs(nis_amount)
+        return round(abs(nis_amount), 2)
 
     def get_income_tax_deduction(self, year):
         """The function returns the income tax deduction"""
@@ -115,7 +115,7 @@ class HrEmployee(models.Model):
         values = {
             'annual_paye': round(abs(annual_paye), 2),
             'allowances': round(allowances, 2),
-            'deductions': abs(deductions),
+            'deductions': round(abs(deductions), 2),
             'travel_allowance': round(travel_allowance, 2),
             'other_allowance': round(other_allowance, 2),
             'gross_earning': round(gross_earning, 2),
