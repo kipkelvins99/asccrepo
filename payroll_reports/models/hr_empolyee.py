@@ -85,7 +85,7 @@ class HrEmployee(models.Model):
 
                     if line.code == 'TA' and str(line.date_from.year) == str(year):
                         travel_allowance += line.total
-                    elif line.code != 'TA' and str(line.date_from.year) == str(year):
+                    elif line.code != 'TA' and line.category_id.code == 'ALW' and str(line.date_from.year) == str(year):
                         other_allowance += line.total
                     if line.code == 'BASIC' and str(line.date_from.year) == str(year):
                         basic_salary += line.total
