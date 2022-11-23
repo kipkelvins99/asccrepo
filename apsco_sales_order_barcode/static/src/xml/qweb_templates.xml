@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<templates xml:space="preserve">
-    <t t-inherit="stock_barcode.stock_barcode_settings_widget" t-inherit-mode="extension">
-        <xpath expr="//div[hasclass('o_barcode_settings')]" position="inside">
-            <button t-if="widget.model == 'stock.picking'"
-                    class="btn-lg btn btn-dark text-uppercase o_print_sales_order">Print Sale Order Barcode (3x2)</button>
-        </xpath>
-    </t>
-</templates>
