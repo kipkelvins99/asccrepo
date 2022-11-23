@@ -1,9 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_td4_report_wizard,access_td4_report_wizard,model_td4_report_wizard,base.group_user,1,1,1,1
-access_td4_edit,access_td4_edit,model_td4_edit,base.group_user,1,1,1,1
-access_year_periods,access_year_periods,model_year_periods,base.group_user,1,1,1,1
-access_additions_deductions_wizard,access_additions_deductions_wizard,model_additions_deductions_wizard,base.group_user,1,1,1,1
-access_tax_report_wizard,access_tax_report_wizard,model_tax_report_wizard,base.group_user,1,1,1,1
-access_nis_report_wizard,access_nis_report_wizard,model_nis_report_wizard,base.group_user,1,1,1,1
-access_payroll_monthly_summary_report_wizard,access_payroll_monthly_summary_report_wizard,model_payroll_monthly_summary_report_wizard,base.group_user,1,1,1,1
-access_nis_report_due_wizard,access_nis_report_due_wizard,model_nis_report_due_wizard,base.group_user,1,1,1,1
