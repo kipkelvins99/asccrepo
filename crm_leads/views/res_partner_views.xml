@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="view_partner_credit_form" model="ir.ui.view">
+        <field name="name">res_partner.view.form.credit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field eval="1" name="priority"/>
+        <field name="arch" type="xml">
+            <data>
+<!--                <xpath expr="//page[@name='sales_purchases']/group" position="inside">-->
+<!--                    <group name="container_row_stock"  priority="6">-->
+<!--                        <group string="Allow Credit Payment" name="credit_payment" colspan="2">-->
+<!--                            <field name="allow_credit_amount"/>-->
+<!--                        </group>-->
+<!--                    </group>-->
+<!--                </xpath>-->
+                <xpath expr="//field[@name='category_id']" position="after">
+                    <field name="is_agent"/>
+                </xpath>
+
+            </data>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <!-- inherit view of Lead Form : adding the "convert to ticket" button -->
+    <record id="crm_lead_view_form" model="ir.ui.view">
+        <field name="name">crm.lead.form</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='company_id']" position='after'>
+                <field name="branch_id"/>
+            </xpath>
+            <xpath expr="//field[@name='team_id']" position="attributes">
+                <attribute name="attrs">{'invisible':[('branch_id', '!=', None)]}</attribute>
+                </xpath>
+            <xpath expr="//field[@name='user_id']" position="attributes">
+                <attribute name="attrs">{'invisible':[('branch_id', '!=', None)]}</attribute>
+                </xpath>
+            <xpath expr="//field[@name='team_id']" position='after' >
+                <field name="team_id"/>
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position='after'>
+                <field name="user_id"/>
+            </xpath>
+            <xpath expr="/form/sheet/notebook/page[@name='lead']//group[@name='Misc']" position='inside'>
+                <field name="agent_id"/>
+            </xpath>
+            <xpath expr="/form/sheet/notebook/page[@name='lead']//group/field[@name='campaign_id']" position='before'>
+                <field name="product_id"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
