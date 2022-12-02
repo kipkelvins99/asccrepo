@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template">
+    <t t-name="crm_logout_systray">
+<!--        <li class="weather_navbar_item">-->
+            <div class="weather_systray_item" style="display:none">
+                <h6>
+                    <span id="min">00</span>
+                    :
+                    <span id="sec">00</span>
+                </h6>
+                <!--                <a class="weather_icon dropdown-toggle o-no-caret " data-toggle="dropdown"-->
+                <!--                   aria-expanded="true" title="Weather" href="#" role="button">-->
+                <!--                    <i id="weather_icon" class="fa fa-cloud" role="img" aria-label="Weather"/>-->
+                <!--                    <span class="o_notification_counter badge"/>-->
+                <!--                </a>-->
+                <!--                <div class="weather_systray_dropdown dropdown-menu dropdown-menu-left" role="menu">-->
+                <!--                    <div class="weather_notification"/>-->
+                <!--                </div>-->
+            </div>
+<!--        </li>-->
+    </t>
+</templates>
+
