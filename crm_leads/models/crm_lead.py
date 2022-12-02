@@ -24,11 +24,6 @@ class Lead(models.Model):
     def onchange_agent(self):
         self.agent_id.is_agent = True
 
-    # @api.onchange('branch_id')
-    # def onchange_branch_id(self):
-    #     s
-    #     print(self.user_id, self.team_id, 'oooo')
-
     @api.depends('company_id')
     def _compute_branch(self):
         company = self.company_id
