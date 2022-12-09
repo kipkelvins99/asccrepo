@@ -7,12 +7,13 @@ class Lead(models.Model):
     agent_id = fields.Many2one('res.partner', 'Agent', domain="[('is_agent', '=', True)]")
     product_id = fields.Many2one('product.product', 'Product')
     branch_id = fields.Many2one("res.branch", string='Branch',
-                                default=False, domain="[('company_id', '=', company_id)]"
+                                default=False,
+                                # domain="[('company_id', '=', company_id)]"
                                 # compute="_compute_branch"
                                 )
     team_id = fields.Many2one(
         'crm.team', string='Sales Team', check_company=True, index=True, tracking=True,
-        domain="[('branch_id', '=', branch_id), ('company_id', '=', company_id)]",
+        domain="[('branch_id', '=', branch_id)]",
         ondelete="set null", readonly=False, default=False)
     user_id = fields.Many2one(
         'res.users', string='Salesperson',
@@ -23,21 +24,6 @@ class Lead(models.Model):
     def onchange_agent(self):
         self.agent_id.is_agent = True
 
-    # @api.depends('user_id', 'type')
-    # def _compute_team_id(self):
-    #     """ When changing the user, also set a team_id or restrict team id
-    #     to the ones user_id is member of. """
-    #     for lead in self:
-    #         # setting user as void should not trigger a new team computation
-    #         if not lead.user_id:
-    #             continue
-    #         user = lead.user_id
-    #         if lead.team_id and user in (lead.team_id.member_ids | lead.team_id.user_id):
-    #             continue
-    #         team_domain = [('use_leads', '=', True)] if lead.type == 'lead' else [('use_opportunities', '=', True)]
-    #         team = self.env['crm.team']._get_default_team_id(user_id=user.id, domain=team_domain)
-    #         lead.team_id = team.id
-    #         print('yesss')
     @api.depends('company_id')
     def _compute_branch(self):
         company = self.company_id
