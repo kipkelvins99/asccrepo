@@ -17,8 +17,21 @@ class Lead(models.Model):
         branch = branch_ids.filtered(
             lambda branch: branch.company_id == company)
 
-        print(branch.ids, branch_ids, company,'branch.ids[0]')
+        print(branch.ids, branch_ids, company, 'branch.ids[0]')
         if branch:
             self.branch_id = branch.ids[0]
         else:
             self.branch_id = False
+
+
+class CrmTeamMember(models.Model):
+    _inherit = 'crm.team.member'
+
+    user_id = fields.Many2one(
+        'res.users', string='Salesperson',  # TDE FIXME check responsible field
+        check_company=True, index=True, ondelete='cascade', required=True,
+        domain="[('share', '=', False), ('id', 'not in', user_in_teams_ids), ('company_ids', 'in', user_company_ids)]")
+
+    @api.onchange('user_id')
+    def onchange_user(self):
+        print(self, 'sellll')

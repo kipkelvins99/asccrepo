@@ -10,6 +10,8 @@
     'depends': ['base', 'crm', 'sale_management', 'purchase'],
     'data': [
         'views/crm_timeline_cron_view.xml',
+        'data/crm_stage_data.xml',
+        'data/mail_activity_data.xml',
     ],
     'license': 'AGPL-3',
     'installable': True,

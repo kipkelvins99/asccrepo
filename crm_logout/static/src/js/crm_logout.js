@@ -23,7 +23,7 @@ odoo.define('crm_logout.crm_logout_systray', function (require) {
        template: 'crm_logout_systray',
        init: function(){
             var self = this;
-//            console.log(self, 'self')
+            console.log(self, 'self')
                 var limit = 10
                 var new_interval = limit * 60000
                 var idleInterval = setTimeout(start, 30000);

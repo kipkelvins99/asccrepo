@@ -35,7 +35,7 @@
         # 'security/ir.model.access.csv',
         # 'data/account_data.xml',
         'views/res_config_settings_view.xml',
-        'views/crm_lead_views.xml',
+        # 'views/crm_lead_views.xml',
     ],
     'assets': {
         'web.assets_qweb': [
